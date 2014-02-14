@@ -34,7 +34,7 @@ singleton.configure = function(options) {
   singleton.options = options;
 };
 singleton.Connection = Connection;
-// singleton.Select = require('./select').Select;
+singleton.Select = require('./select').Select;
 // singleton.Insert = require('./insert').Insert;
-// singleton.Update = require('./update').Update;
-// singleton.Delete = require('./delete').Delete;
+singleton.Update = require('./update').Update;
+singleton.Delete = require('./delete').Delete;
