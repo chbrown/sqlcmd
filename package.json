@@ -1,8 +1,13 @@
 {
   "name": "sqlcmd",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "SQL command builder. Incremental and immutable.",
-  "keywords": ["sql", "build", "string", "command"],
+  "keywords": [
+    "sql",
+    "build",
+    "string",
+    "command"
+  ],
   "homepage": "https://github.com/chbrown/sqlcmd",
   "repository": {
     "type": "git",
@@ -18,10 +23,7 @@
     "async": "*",
     "pg": "*"
   },
-  "devDependencies": {
-  },
-  "bin": {
-  },
-  "scripts": {
-  }
+  "devDependencies": {},
+  "bin": {},
+  "scripts": {}
 }
