@@ -1,5 +1,4 @@
 /*jslint node: true */
-// var _ = require('underscore');
 var pg = require('pg');
 
 var Connection = function(options) {
