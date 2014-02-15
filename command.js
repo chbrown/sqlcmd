@@ -16,7 +16,9 @@ Command.prototype.prepare = function() {
     var arg_name = match.slice(1);
     var arg = context[arg_name];
     if (arg === undefined) {
-      throw new Error('Cannot execute command with incomplete context. "' + arg_name + '" is missing.');
+      var message = 'Cannot execute command with incomplete context. "' + arg_name + '" is missing.';
+      // message += ' context = ' + util.inspect(context);
+      throw new Error(message);
     }
     var index = args.push(arg);
     return '$' + index;
