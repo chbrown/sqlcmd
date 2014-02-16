@@ -45,6 +45,11 @@ Insert.prototype.join = function() {
 
   return parts.join(' ');
 };
+
+/** the destructive methods follow this convention:
+   _method() (may) alter the object
+   method() will return a new object with the change if a change applies
+*/
 Insert.prototype._add = function(column, value) {
   /** MUTABLE */
   var arg_name = this._nextArg();
@@ -53,10 +58,25 @@ Insert.prototype._add = function(column, value) {
   this.query.values.push(':' + arg_name);
   return this;
 };
+Insert.prototype.add = function(column, value) {
+  /** IMMUTABLE */
+  return this.clone()._add(column, value);
+};
 Insert.prototype._addIf = function(column, value) {
   /** MUTABLE */
   if (value !== undefined && value !== null) {
-    return this.add(column, value);
+    return this._add(column, value);
+  }
+  return this;
+};
+Insert.prototype.addIf = function(column, value) {
+  /** IMMUTABLE */
+  return this.clone()._addIf(column, value);
+};
+Insert.prototype._set = function(hash) {
+  /** MUTABLE */
+  for (var key in hash) {
+    this._add(key, hash[key]);
   }
   return this;
 };
@@ -65,20 +85,19 @@ Insert.prototype.set = function(hash) {
 
   Like Update#set, this function presumes that all object keys are safe, and all object values are unsafe.
   */
-  var insert = this.clone();
+  return this.clone()._set(hash);
+};
+Insert.prototype._setIf = function(hash) {
+  /** MUTABLE */
   for (var key in hash) {
-    insert._add(key, hash[key]);
+    this._addIf(key, hash[key]);
   }
-  return insert;
+  return this;
 };
 Insert.prototype.setIf = function(hash) {
   /** IMMUTABLE
 
   Just like .set() except ignore null/undefined values.
   */
-  var insert = this.clone();
-  for (var key in hash) {
-    insert._addIf(key, hash[key]);
-  }
-  return insert;
+  return this.clone()._setIf(hash);
 };
