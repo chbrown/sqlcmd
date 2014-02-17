@@ -25,32 +25,31 @@ Select.prototype.join = function() {
   // if (this.q.limit !== null)
   //   parts.extend(['LIMIT', this.q.limit]);
   // return parts.join(' ');
-  var query = this.query;
   var parts = ['SELECT'];
   // add columns
-  if (query.columns.length === 0) {
+  if (this.query.columns.length === 0) {
     parts.push('*');
   }
   else {
-    lib.pushAll(parts, query.columns);
+    parts.push(this.query.columns.join(', '));
   }
   // from table
-  parts.push('FROM ' + query.table);
+  parts.push('FROM ' + this.query.table);
   // where ...
-  if (query.wheres.length > 0) {
-    parts.push('WHERE ' + query.wheres.join(' AND '));
+  if (this.query.wheres.length > 0) {
+    parts.push('WHERE ' + this.query.wheres.join(' AND '));
   }
   // order by ...
-  if (query.order_bys.length > 0) {
-    parts.push('ORDER BY ' + query.order_bys.join(', '));
+  if (this.query.order_bys.length > 0) {
+    parts.push('ORDER BY ' + this.query.order_bys.join(', '));
   }
   // limit
-  if (query.limit) {
-    parts.push('LIMIT ' + query.limit);
+  if (this.query.limit) {
+    parts.push('LIMIT ' + this.query.limit);
   }
   // offset
-  if (query.offset) {
-    parts.push('OFFSET ' + query.offset);
+  if (this.query.offset) {
+    parts.push('OFFSET ' + this.query.offset);
   }
   return parts.join(' ');
 };
@@ -94,7 +93,7 @@ Select.prototype.whereIf = function(sql /*, args... */) {
   }
   return select;
 };
-Select.prototype.addColumns = function(/* columns... */) {
+Select.prototype.add = function(/* columns... */) {
   /** IMMUTABLE */
   var select = this.clone();
   var columns = lib.slice(arguments, 0);
