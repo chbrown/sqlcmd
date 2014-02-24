@@ -1,6 +1,6 @@
 {
   "name": "sqlcmd",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "SQL command builder. Incremental and immutable.",
   "keywords": [
     "sql",
