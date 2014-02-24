@@ -66,14 +66,35 @@ Select.prototype.clone = function() {
   var new_context = lib.clone(this.context);
   return new Select(new_query, new_context);
 };
-Select.prototype.where = function(sql /*, args... */) {
-  /** IMMUTABLE */
+Select.prototype._where = function(sql, arg) {
+  /** MUTABLE */
+  var interpolated_sql = this._interpolate(sql, [arg]);
+  this.query.wheres.push(interpolated_sql);
+  return this;
+};
+Select.prototype.where = function(sql, arg) {
+  /** IMMUTABLE
+
+  arg needn't be anything, UNLESS sql contains a ?, in which case it better be something.
+
+  where() is not overloaded, call it with a string (and maybe a parameterized value)
+
+  If you want to call it with an object, use whereEqual.
+  */
+  return this._where.apply(this.clone(), arguments);
+};
+Select.prototype.whereEqual = function(obj) {
+  /** IMMUTABLE
+  This functions just like calling where() several times with simple
+  ('column = ?', value) pairs. Be careful with this one! only the
+  hash's values (strings, I hope) will be escaped, so SQL injection is
+  totally possible with the keys.
+  */
   var select = this.clone();
-  var args = lib.slice(arguments, 1);
-  if (args.length > 0) {
-    sql = select._interpolate(sql, args);
+  // return this._where.apply(this.clone(), arguments);
+  for (var key in obj) {
+    select = select._where(key + ' = ?', obj[key]);
   }
-  select.query.wheres.push(sql);
   return select;
 };
 Select.prototype.whereIf = function(sql /*, args... */) {
@@ -93,6 +114,7 @@ Select.prototype.whereIf = function(sql /*, args... */) {
   }
   return select;
 };
+
 Select.prototype.add = function(/* columns... */) {
   /** IMMUTABLE */
   var select = this.clone();

@@ -9,13 +9,15 @@ Connection.prototype.query = exports.query = function(sql, args, callback) {
 
   `callback`: function(Error | null, [Object] | null)
   */
-  //logger.info('Connecting to PG as %s:%s', process.getgid(), process.getuid(), process.env.USER);
+  var logger = this.logger;
+  // logger.debug('Connecting to PostgresSQL as %s:%s (%s)',
+  //   process.getgid(), process.getuid(), process.env.USER);
   pg.connect(this.options, function(err, client, done) {
     if (err) return callback ? callback(err) : err;
 
-    // logger.debug('Executing SQL query "%s" with variables: %j', sql, args);
+    if (logger) logger.debug('Executing SQL "%s" with variables: %j', sql, args);
     client.query(sql, args, function(err, result) {
-      // logger.debug('Result:', result);
+      if (logger) logger.debug('Query result: %j', result);
       done();
       if (callback) {
         callback(err, result ? result.rows : null);
@@ -27,7 +29,7 @@ Connection.prototype.query = exports.query = function(sql, args, callback) {
 
 var singleton = module.exports = new Connection({
   host: '/tmp',
-  database: 'postgres'
+  database: 'postgres',
 });
 singleton.configure = function(options) {
   // _.extend(singleton.options, options);
