@@ -82,11 +82,11 @@ Update.prototype.set = function(hash) {
 Update.prototype.setIf = function(hash) {
   /** IMMUTABLE
 
-  Just like .set() except ignore null/undefined values.
+  Just like .set() except ignore undefined values.
   */
   var update = this.clone();
   for (var key in hash) {
-    if (hash[key] !== undefined && hash[key] !== null) {
+    if (hash[key] !== undefined) {
       var arg_name = update._nextArg();
       update.context[arg_name] = hash[key];
       update.query.eqs.push(key + ' = :' + arg_name);
