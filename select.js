@@ -114,6 +114,28 @@ Select.prototype.whereIf = function(sql /*, args... */) {
   }
   return select;
 };
+Select.prototype._whereIn = function(column, list) {
+  /** Though ugly, apparently this is just how it works:
+
+  https://github.com/brianc/node-postgres/issues/431
+
+  Ends up with something like 'x IN(:arg1, :arg2, :arg3)' and then
+    {arg1: 'a', arg2: 'b', arg3: 'c'} in the context
+  Thus, each item in list is escaped (but column is not)
+  */
+  var self = this;
+  var inlist = list.map(function(item) {
+    var arg_name = self._nextArg();
+    self.context[arg_name] = item;
+    return ':' + arg_name;
+  }).join(', ');
+  this.query.wheres.push(column + ' IN (' + inlist + ')');
+  return this;
+};
+Select.prototype.whereIn = function(column, list) {
+  return this._whereIn.apply(this.clone(), arguments);
+};
+
 
 Select.prototype.add = function(/* columns... */) {
   /** IMMUTABLE */
