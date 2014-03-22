@@ -1,4 +1,5 @@
 /*jslint node: true */
+var util = require('util');
 
 // --------------
 // tried and true
@@ -28,7 +29,7 @@ exports.slice = function(array, begin, end) {
 // ------------
 // non-standard
 
-var clone = exports.clone = function(obj) {
+exports.clone = function(obj) {
   // not really comprehensive...
   if (Array.isArray(obj)) {
     return obj.slice(0);
@@ -37,4 +38,9 @@ var clone = exports.clone = function(obj) {
     return extend({}, obj);
   }
   return obj;
+};
+
+exports.inherit = function(Class, SuperClass) {
+  util.inherits(Class, SuperClass);
+  extend(Class, SuperClass);
 };

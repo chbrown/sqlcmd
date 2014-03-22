@@ -1,21 +1,35 @@
 /*jslint node: true */
 var pg = require('pg');
 
-var Connection = function(options) {
+var Select = require('./commands/select').Select;
+var Insert = require('./commands/insert').Insert;
+var Update = require('./commands/update').Update;
+var Delete = require('./commands/delete').Delete;
+
+var Connection = exports.Connection = function(options) {
+  /** configure connection with options to be used for each query */
   this.options = options;
 };
-Connection.prototype.query = exports.query = function(sql, args, callback) {
-  /** run sql query on pre-configured SQL connection
+Connection.prototype.connect = function(callback) {
+  /**
+  Very shallow layer to run pg.connect.
 
-  `callback`: function(Error | null, [Object] | null)
+  callback: function(err, client, done) { ... }
+
+  The user is responsible for running done() when done!
+  */
+  pg.connect(this.options, callback);
+};
+Connection.prototype.query = function(sql, args, callback) {
+  /** run sql query on configured SQL connection
+
+  callback: function(Error | null, [Object] | null)
   */
   var logger = this.logger;
-  // logger.debug('Connecting to PostgresSQL as %s:%s (%s)',
-  //   process.getgid(), process.getuid(), process.env.USER);
   pg.connect(this.options, function(err, client, done) {
     if (err) return callback ? callback(err) : err;
 
-    if (logger) logger.debug('Executing SQL "%s" with variables: %j', sql, args);
+    if (logger) logger.info('Executing SQL "%s" with variables: %j', sql, args);
     client.query(sql, args, function(err, result) {
       if (logger) logger.debug('Query result: %j', result);
       done();
@@ -25,18 +39,24 @@ Connection.prototype.query = exports.query = function(sql, args, callback) {
     });
   });
 };
-// Connection.prototype.Select;
-
-var singleton = module.exports = new Connection({
-  host: '/tmp',
-  database: 'postgres',
-});
-singleton.configure = function(options) {
-  // _.extend(singleton.options, options);
-  singleton.options = options;
+// do this better:
+Connection.prototype.Select = function(from) {
+  var command = new Select(from);
+  command.connection = this;
+  return command;
 };
-singleton.Connection = Connection;
-singleton.Select = require('./select').Select;
-singleton.Insert = require('./insert').Insert;
-singleton.Update = require('./update').Update;
-singleton.Delete = require('./delete').Delete;
+Connection.prototype.Insert = function(into) {
+  var command = new Insert(into);
+  command.connection = this;
+  return command;
+};
+Connection.prototype.Update = function(table) {
+  var command = new Update(table);
+  command.connection = this;
+  return command;
+};
+Connection.prototype.Delete = function(from) {
+  var command = new Delete(from);
+  command.connection = this;
+  return command;
+};

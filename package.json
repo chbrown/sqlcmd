@@ -23,7 +23,11 @@
     "async": "*",
     "pg": "*"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tap": "*"
+  },
   "bin": {},
-  "scripts": {}
+  "scripts": {
+    "test": "tap test"
+  }
 }
