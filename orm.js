@@ -76,6 +76,17 @@ Record.delete = function(pattern, callback) {
   .whereEqual(pattern)
   .execute(callback);
 };
+Record.insert = function(fields, callback) {
+  /** Insert single record with the given fields
+  callback(Error | null, null | Object)
+  */
+  this.connection.Insert(this.table)
+  .set(fields)
+  .execute(function(err, rows) {
+    if (err) return callback(err);
+    callback(null, rows[0]);
+  });
+};
 
 var ORM = exports.ORM = function(connection) {
   this.connection = connection;
