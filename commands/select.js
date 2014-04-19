@@ -120,12 +120,21 @@ Select.prototype._whereIn = function(column, list) {
   Thus, each item in list is escaped (but column is not)
   */
   var self = this;
-  var inlist = list.map(function(item) {
-    var arg_name = self._nextArg();
-    self.context[arg_name] = item;
-    return ':' + arg_name;
-  }).join(', ');
-  this.wheres.push(column + ' IN (' + inlist + ')');
+  // console.error();
+  if (list.length) {
+    var inlist = list.map(function(item) {
+      var arg_name = self._nextArg();
+      self.context[arg_name] = item;
+      return ':' + arg_name;
+    }).join(', ');
+    this.wheres.push(column + ' IN (' + inlist + ')');
+  }
+  else {
+    // 0-length lists get special treatment.
+    // something is never an element of the empty list, but 'WHERE x IN ()'
+    // is a syntax error, not FALSE, in PostgreSQL
+    this.wheres.push('FALSE');
+  }
   return this;
 };
 Select.prototype._orderBy = function(/* columns... */) {
