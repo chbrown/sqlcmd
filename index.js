@@ -94,7 +94,7 @@ Connection.prototype.createDatabase = function(callback) {
   */
   var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
   var db = new Connection(postgres_options);
-  db.query('CREATE DATABASE ' + this.options.database, [], callback);
+  db.query('CREATE DATABASE "' + this.options.database + '"', [], callback);
   db.end();
 };
 
@@ -107,7 +107,7 @@ Connection.prototype.dropDatabase = function(callback) {
   */
   var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
   var db = new Connection(postgres_options);
-  db.query('DROP DATABASE ' + this.options.database, [], callback);
+  db.query('DROP DATABASE "' + this.options.database + '"', [], callback);
   db.end();
 };
 
