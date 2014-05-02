@@ -1,5 +1,5 @@
 /*jslint node: true */
-var pg = require('pg');
+var pg = require('pg.js');
 var fs = require('fs');
 var lib = require('./lib');
 
