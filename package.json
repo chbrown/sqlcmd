@@ -20,13 +20,12 @@
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "dependencies": {
-    "async": "*",
     "pg.js": "*"
   },
+  "main": "connection.js",
   "devDependencies": {
     "tap": "*"
   },
-  "bin": {},
   "scripts": {
     "test": "tap test"
   }

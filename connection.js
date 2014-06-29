@@ -44,6 +44,7 @@ Connection.prototype.query = function(sql, args, callback) {
     });
   });
 };
+
 // do this better:
 Connection.prototype.Select = function(from) {
   var command = new Select(from);
@@ -66,24 +67,41 @@ Connection.prototype.Delete = function(from) {
   return command;
 };
 
+Connection.prototype.executeSQLFile = function(filepath, callback) {
+  /** Read SQL from an arbitrary filepath and execute it.
+
+  If you thought connection.createDatabase was unsafe, you got another think coming.
+
+      callback: function(err)
+  */
+  var self = this;
+  fs.readFile(filepath, {encoding: 'utf8'}, function(err, sql) {
+    if (err) return callback(err);
+    self.query(sql, [], callback);
+  });
+};
+
+// Database commands (uses same config except with 'postgres' database
+Connection.prototype.postgresConnection = function(callback) {
+  var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
+  return new Connection(postgres_options);
+};
 Connection.prototype.databaseExists = function(callback) {
   /** Check if the database used by this connection exists.
   This method connects to the special 'postgres' database with the same connection credentials.
 
       callback: function(err, exists: Boolean)
   */
-  var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
-  var db = new Connection(postgres_options);
-  db.Select('pg_catalog.pg_database')
+  var postgres_db = this.postgresConnection();
+  postgres_db.Select('pg_catalog.pg_database')
   .where('datname = ?', this.options.database)
   .execute(function(err, rows) {
     if (err) return callback(err);
 
     callback(null, rows.length > 0);
   });
-  db.end();
+  postgres_db.end();
 };
-
 Connection.prototype.createDatabase = function(callback) {
   /** Create the database used by this connection.
 
@@ -92,12 +110,10 @@ Connection.prototype.createDatabase = function(callback) {
 
       callback: function(err)
   */
-  var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
-  var db = new Connection(postgres_options);
-  db.query('CREATE DATABASE "' + this.options.database + '"', [], callback);
-  db.end();
+  var postgres_db = this.postgresConnection();
+  postgres_db.query('CREATE DATABASE "' + this.options.database + '"', [], callback);
+  postgres_db.end();
 };
-
 Connection.prototype.dropDatabase = function(callback) {
   /** Drop the database used by this connection.
 
@@ -105,22 +121,34 @@ Connection.prototype.dropDatabase = function(callback) {
 
       callback: function(err)
   */
-  var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
-  var db = new Connection(postgres_options);
-  db.query('DROP DATABASE "' + this.options.database + '"', [], callback);
-  db.end();
+  var postgres_db = this.postgresConnection();
+  postgres_db.query('DROP DATABASE "' + this.options.database + '"', [], callback);
+  postgres_db.end();
 };
 
-Connection.prototype.executeSQLFile = function(filepath, callback) {
-  /** Read SQL from an arbitrary filepath and execute it.
+// all-in-one
+Connection.prototype.initializeDatabase = function(sql_filepath, callback) {
+  /** Create the database if it doesn't exist and execute the specified sql on it.
 
-  If you thought connection.create was unsafe, you got another think coming.
-
-      callback: function(err)
+  callback: function(Error | null)
   */
   var self = this;
-  fs.readFile(filepath, {encoding: 'utf8'}, function (err, sql) {
+  this.databaseExists(function(err, exists) {
     if (err) return callback(err);
-    self.query(sql, [], callback);
+    // console.info('database "%s" %s', connection.options.database, exists ? 'already exists' : 'does not exist');
+    if (!exists) {
+      self.createDatabase(function(err) {
+        if (err) return callback(err);
+        // console.info('created database "%s"', connection.options.database);
+        self.executeSQLFile(sql_filepath, function(err) {
+          if (err) return callback(err);
+          // console.info('executed SQL in "%s"', schema_filepath);
+          callback();
+        });
+      });
+    }
+    else {
+      callback();
+    }
   });
 };
