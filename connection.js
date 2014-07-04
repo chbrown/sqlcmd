@@ -135,14 +135,11 @@ Connection.prototype.initializeDatabase = function(sql_filepath, callback) {
   var self = this;
   this.databaseExists(function(err, exists) {
     if (err) return callback(err);
-    // console.info('database "%s" %s', connection.options.database, exists ? 'already exists' : 'does not exist');
     if (!exists) {
       self.createDatabase(function(err) {
         if (err) return callback(err);
-        // console.info('created database "%s"', connection.options.database);
         self.executeSQLFile(sql_filepath, function(err) {
           if (err) return callback(err);
-          // console.info('executed SQL in "%s"', schema_filepath);
           callback();
         });
       });

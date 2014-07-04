@@ -76,7 +76,6 @@ Select.prototype._where = function(sql /*, args... */) {
   If you want to call it with an object, use whereEqual().
   */
   var args = lib.slice(arguments, 1);
-  console.log('_where', args);
   var interpolated_sql = this._interpolate(sql, args);
   this.wheres.push(interpolated_sql);
   return this;
@@ -104,7 +103,6 @@ Select.prototype._whereIn = function(column, list) {
   Thus, each item in list is escaped (but column is not)
   */
   var self = this;
-  // console.error();
   if (list.length) {
     var inlist = list.map(function(item) {
       var arg_name = self._nextArg();
