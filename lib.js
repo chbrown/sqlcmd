@@ -23,7 +23,17 @@ exports.pushAll = function(array, xs) {
 };
 
 exports.slice = function(array, begin, end) {
-  return Array.prototype.slice.call(array, begin, end);
+  /** Often, array will be an `arguments` metavar, so we don't use
+
+      return Array.prototype.slice.call(array, begin, end);
+
+  to avoid leakage.
+  */
+  var clone = [];
+  for (var i = begin || 0, l = end || array.length; i < l; i++) {
+    clone.push(array[i]);
+  }
+  return clone;
 };
 
 // ------------

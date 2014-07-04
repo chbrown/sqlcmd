@@ -68,15 +68,16 @@ Select.prototype._add = function(/* columns... */) {
   lib.pushAll(this.columns, columns);
   return this;
 };
-Select.prototype._where = function(sql, arg) {
+Select.prototype._where = function(sql /*, args... */) {
   /**
-  arg needn't be anything, UNLESS sql contains a ?, in which case it better be something.
+  args needn't be anything, UNLESS sql contains a ?, in which case it better be something.
 
-  where() is not overloaded, call it with a string (and maybe a parameterized value)
-
-  If you want to call it with an object, use whereEqual.
+  where() is not overloaded; call it with a string (and maybe parameterized values)
+  If you want to call it with an object, use whereEqual().
   */
-  var interpolated_sql = this._interpolate(sql, [arg]);
+  var args = lib.slice(arguments, 1);
+  console.log('_where', args);
+  var interpolated_sql = this._interpolate(sql, args);
   this.wheres.push(interpolated_sql);
   return this;
 };
@@ -93,23 +94,6 @@ Select.prototype._whereEqual = function(hash) {
   }
   return this;
 };
-// Select.prototype.whereIf = function(sql /*, args... */) {
-//   /** Just like where, except ignored if the args are undefined.
-//   Too much of a hack / special case? */
-//   var select = this;
-//   var args = lib.slice(arguments, 1);
-//   if (args.length > 0) {
-//     var all_defined = args.every(function(x) {
-//       return x !== undefined;
-//     });
-//     if (all_defined) {
-//       select = select.clone();
-//       sql = select._interpolate(sql, args);
-//       select.wheres.push(sql);
-//     }
-//   }
-//   return select;
-// };
 Select.prototype._whereIn = function(column, list) {
   /** Though ugly, apparently this is just how it works:
 
