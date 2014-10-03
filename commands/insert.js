@@ -29,7 +29,7 @@ Insert.prototype._sql = function() {
   var parts = ['INSERT INTO', this.into];
   // no columns means ALL columns, in default order
   if (this.columns.length > 0) {
-    parts.push('(', this.columns.join(', ') + ')');
+    parts.push('(' + this.columns.join(', ') + ')');
   }
   // no values means defaults only
   if (this.values.length === 0) {
