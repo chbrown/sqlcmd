@@ -1,6 +1,24 @@
 /*jslint node: true */
 var util = require('util');
 
+function serializeSqlValue(raw) {
+  // JSON.stringify doesn't quite work because it uses double quotes
+  if (raw === null) {
+    return 'NULL';
+  }
+  else if (raw === undefined) {
+    throw new Error('undefined has no SQL value');
+  }
+  else if (typeof raw == 'number') {
+    return raw.toString();
+  }
+  else {
+    // multiline strings are fine in SQL; all we care about is escaping the quotes
+    var string = raw.toString().replace(/'/g, "''");
+    return "'" + string + "'";
+  }
+}
+
 var Command = exports.Command = function() {
   this.context = {};
 };
@@ -62,6 +80,16 @@ Command.prototype._prepare = function() {
   });
   return { sql: sql, args: args };
 };
+Command.prototype.toUnsafeSQL = function() {
+  /** Unsafe! Doesn't even try to protect against SQL injection */
+  var prepared_statement = this._prepare();
+  return prepared_statement.sql.replace(/\$(\d+)/g, function(m, group1) {
+    var index = parseInt(group1, 10) - 1;
+    var value = prepared_statement.args[index];
+    return serializeSqlValue(value);
+  });
+};
+
 Command.prototype.execute = function(callback) {
   /**
   callback: function(err | null, rows | null)
