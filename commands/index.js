@@ -2,7 +2,7 @@
 var util = require('util');
 
 function serializeSqlValue(raw) {
-  // JSON.stringify doesn't quite work because it uses double quotes
+  // JSON.stringify doesn't quite work for all values because it uses double quotes
   if (raw === null) {
     return 'NULL';
   }
@@ -14,8 +14,8 @@ function serializeSqlValue(raw) {
   }
   else {
     // multiline strings are fine in SQL; all we care about is escaping the quotes
-    var string = raw.toString().replace(/'/g, "''");
-    return "'" + string + "'";
+    var string = (typeof raw == 'string') ? raw : JSON.stringify(raw);
+    return "'" + string.replace(/'/g, "''") + "'";
   }
 }
 
