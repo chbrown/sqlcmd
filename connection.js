@@ -84,7 +84,9 @@ Connection.prototype.executeSQLFile = function(filepath, callback) {
 // Database commands (uses same config except with 'postgres' database
 Connection.prototype.postgresConnection = function(callback) {
   var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
-  return new Connection(postgres_options);
+  var connection = new Connection(postgres_options);
+  connection.logger = this.logger;
+  return connection;
 };
 Connection.prototype.databaseExists = function(callback) {
   /** Check if the database used by this connection exists.
