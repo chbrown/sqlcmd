@@ -36,7 +36,8 @@ Connection.prototype.query = function(sql, args, callback) {
 
     if (logger) logger.info('Executing SQL "%s" with variables: %j', sql, args);
     client.query(sql, args, function(err, result) {
-      if (logger) logger.debug('Query result: %j', result);
+      if (err && logger) logger.error('Query error: %j', err);
+      else if (logger) logger.debug('Query result: %j', result);
       done();
       if (callback) {
         callback(err, result ? result.rows : null);
