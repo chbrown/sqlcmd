@@ -73,7 +73,7 @@ Connection.prototype.executeSQLFile = function(filepath, callback) {
 
   If you thought connection.createDatabase was unsafe, you got another think coming.
 
-      callback: function(err)
+      callback: function(error?: Error)
   */
   var self = this;
   fs.readFile(filepath, {encoding: 'utf8'}, function(err, sql) {
@@ -105,50 +105,80 @@ Connection.prototype.databaseExists = function(callback) {
   });
   postgres_db.end();
 };
+
+// CREATE DATABASE and helper
 Connection.prototype.createDatabase = function(callback) {
   /** Create the database used by this connection.
 
   We can't specify the database name as an argument, so we just put it into the string raw.
   This is unsafe, of course, but if you want to break your own computer, go for it.
 
-      callback: function(err)
+      callback: function(error?: Error)
   */
   var postgres_db = this.postgresConnection();
   postgres_db.query('CREATE DATABASE "' + this.options.database + '"', [], callback);
   postgres_db.end();
 };
+Connection.prototype.createDatabaseIfNotExists = function(callback) {
+  /** Check if the database exists.
+  1. If it does not exist, create it.
+  2. If it already exists, do nothing.
+
+      callback: function(error: Error, created?: boolean)
+  */
+  var self = this;
+  this.databaseExists(function(err, exists) {
+    if (err) return callback(err);
+    if (exists) return callback(null, false);
+
+    self.createDatabase(function(err) {
+      callback(err, err ? undefined : true);
+    });
+  });
+};
+
+// DROP DATABASE and helper
 Connection.prototype.dropDatabase = function(callback) {
   /** Drop the database used by this connection.
 
-  Subject to injection!
+  Vulnerable to injection via the database name!
 
-      callback: function(err)
+      callback: function(error?: Error)
   */
   var postgres_db = this.postgresConnection();
   postgres_db.query('DROP DATABASE "' + this.options.database + '"', [], callback);
   postgres_db.end();
+};
+Connection.prototype.dropDatabaseIfExists = function(callback) {
+  /** Check if the database exists.
+  1. If it does not exist, do nothing.
+  2. If it does exist, drop it.
+
+      callback: function(error: Error, dropped?: boolean)
+  */
+  var self = this;
+  this.databaseExists(function(err, exists) {
+    if (err) return callback(err);
+    if (!exists) return callback(null, false);
+
+    self.dropDatabase(function(err) {
+      callback(err, err ? undefined : true);
+    });
+  });
 };
 
 // all-in-one
 Connection.prototype.initializeDatabase = function(sql_filepath, callback) {
   /** Create the database if it doesn't exist and execute the specified sql on it.
 
-  callback: function(Error | null)
+  callback: function(error: Error, initialized?: boolean)
   */
   var self = this;
-  this.databaseExists(function(err, exists) {
+  this.createDatabaseIfNotExists(function(err, exists) {
     if (err) return callback(err);
-    if (!exists) {
-      self.createDatabase(function(err) {
-        if (err) return callback(err);
-        self.executeSQLFile(sql_filepath, function(err) {
-          if (err) return callback(err);
-          callback();
-        });
-      });
-    }
-    else {
-      callback();
-    }
+    if (exists) return callback(null, false);
+    self.executeSQLFile(sql_filepath, function(err) {
+      callback(err, err ? undefined : true);
+    });
   });
 };
