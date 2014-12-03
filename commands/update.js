@@ -30,6 +30,9 @@ Update.prototype._sql = function() {
   if (this.wheres.length > 0) {
     parts.push('WHERE ' + this.wheres.join(' AND '));
   }
+
+  parts.push('RETURNING *');
+
   return parts.join(' ');
 };
 Update.prototype._where = function(sql /*, args... */) {
