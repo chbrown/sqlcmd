@@ -6,7 +6,7 @@ Coarse-grained compositional SQL.
 
     npm install --save sqlcmd
 
-Currently only supports [PostgreSQL](http://www.postgresql.org/), via [pg.js](https://github.com/brianc/node-postgres-pure).
+Currently only supports [PostgreSQL](http://www.postgresql.org/), via [pg](https://github.com/brianc/node-postgres).
 
 ## Examples
 

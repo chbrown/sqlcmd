@@ -20,7 +20,7 @@
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "dependencies": {
-    "pg.js": "*"
+    "pg": "*"
   },
   "main": "connection.js",
   "devDependencies": {
