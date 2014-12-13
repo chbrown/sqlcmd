@@ -9,6 +9,7 @@ var Select = exports.Select = function(from) {
   this.from = from;
   this.columns = [];
   this.wheres = [];
+  this.group_bys = [];
   this.order_bys = [];
   // this.query_limit = null;
   // this.query_offset = null;
@@ -29,6 +30,10 @@ Select.prototype._sql = function() {
   // where ...
   if (this.wheres.length > 0) {
     parts.push('WHERE ' + this.wheres.join(' AND '));
+  }
+  // group by ...
+  if (this.group_bys.length > 0) {
+    parts.push('GROUP BY ' + this.group_bys.join(', '));
   }
   // order by ...
   if (this.order_bys.length > 0) {
@@ -53,6 +58,7 @@ Select.prototype.clone = function() {
   var select = new Select(this.from);
   select.columns = lib.clone(this.columns);
   select.wheres = lib.clone(this.wheres);
+  select.group_bys = lib.clone(this.group_bys);
   select.order_bys = lib.clone(this.order_bys);
   select.query_limit = this.query_limit;
   select.query_offset = this.query_offset;
@@ -119,6 +125,11 @@ Select.prototype._whereIn = function(column, list) {
   }
   return this;
 };
+Select.prototype._groupBy = function(/* columns... */) {
+  var columns = lib.slice(arguments, 0);
+  lib.pushAll(this.group_bys, columns);
+  return this;
+};
 Select.prototype._orderBy = function(/* columns... */) {
   var columns = lib.slice(arguments, 0);
   lib.pushAll(this.order_bys, columns);
@@ -140,4 +151,4 @@ Select.prototype._updateContext = function(key, value) {
 
 // extend with IMMUTABLE variants
 Command.immutable.call(Select,
-  ['add', 'where', 'whereEqual', 'whereIn', 'orderBy', 'offset', 'limit', 'updateContext']);
+  ['add', 'where', 'whereEqual', 'whereIn', 'groupBy', 'orderBy', 'offset', 'limit', 'updateContext']);
