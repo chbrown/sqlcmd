@@ -126,11 +126,13 @@ Select.prototype._whereIn = function(column, list) {
   return this;
 };
 Select.prototype._groupBy = function(/* columns... */) {
+  /** Vulnerable to SQL injection! */
   var columns = lib.slice(arguments, 0);
   lib.pushAll(this.group_bys, columns);
   return this;
 };
 Select.prototype._orderBy = function(/* columns... */) {
+  /** Vulnerable to SQL injection! */
   var columns = lib.slice(arguments, 0);
   lib.pushAll(this.order_bys, columns);
   return this;
