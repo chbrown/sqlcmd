@@ -61,7 +61,7 @@ Select.prototype._where = function(sql /*, args... */) {
   */
   var args = [];
   for (var i = 1; i < arguments.length; i++) {
-    args[i] = arguments[i];
+    args.push(arguments[i]);
   }
 
   sql = this.interpolateQuestionMarks(sql, args);

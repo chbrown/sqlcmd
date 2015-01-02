@@ -15,5 +15,5 @@ As well as:
 Without too much code duplication.
 
 */
-var sqlcmd = module.exports = new Connection({});
+var sqlcmd = module.exports = new Connection();
 sqlcmd.Connection = Connection;

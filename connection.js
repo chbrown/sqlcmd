@@ -1,16 +1,24 @@
 /*jslint node: true */
 var fs = require('fs');
 var path = require('path');
+var events = require('events');
+var util = require('util-enhanced');
 
 /** new Connection(options: any)
 
 Connection provides a single interface to functionality of sqlcmd, and stores
 configuration defaults to be used with every query. The options are unused in
 sqlcmd; only sqlcmd-pg, sqlcmd-sqlite3, etc., use the options argument.
+
+Events:
+  .on('log', function(log_level, message, ...args) { ... })
+
 */
-var Connection = module.exports = function(options) {
+function Connection(options) {
+  events.EventEmitter.call(this);
   this.options = options;
-};
+}
+util.inherits(Connection, events.EventEmitter);
 
 /** Connection.addCommand(name: string, CommandConstructor: typeof Command)
 
@@ -83,6 +91,7 @@ callback
 Connection.prototype.executePatches = function(patches_table, patches_dirpath, callback) {
   var db = this;
   db.CreateTable(patches_table)
+  .ifNotExists()
   .add([
     'filename TEXT NOT NULL',
     'applied TIMESTAMP DEFAULT current_timestamp NOT NULL',
@@ -121,7 +130,7 @@ Connection.prototype.executePatches = function(patches_table, patches_dirpath, c
               db.executeSQL(file_contents, function(err) {
                 db.Insert(patches_table)
                 .set({filename: unapplied_filename})
-                .execute(function(err, patches) {
+                .execute(function(err) {
                   if (err) return callback(err);
 
                   newly_applied_filenames.push(unapplied_filename);
@@ -135,3 +144,5 @@ Connection.prototype.executePatches = function(patches_table, patches_dirpath, c
     });
   });
 };
+
+module.exports = Connection;
