@@ -7,6 +7,7 @@ var Update = module.exports = function(table) {
   this.statement.table = table;
   this.statement.sets = []; // equations / equalities (column-expression pairs)
   this.statement.wheres = [];
+  this.statement.returning = [];
 };
 util.inherits(Update, Command);
 
@@ -24,8 +25,9 @@ Update.prototype.toSQL = function() {
     parts.push('WHERE', this.statement.wheres.join(' AND '));
   }
 
-  // well, why not
-  parts.push('RETURNING *');
+  if (this.statement.returning.length > 0) {
+    parts.push('RETURNING', this.statement.returning.join(', '));
+  }
 
   return parts.join(' ');
 };
@@ -101,7 +103,6 @@ In this way, it's a lot like the Select#_whereEqual() method
 If that's not true, you should add values to `this.eqs` directly.
 */
 Update.prototype._setEqual = function(hash) {
-
   for (var column in hash) {
     var value = hash[column];
     if (value !== undefined) {
@@ -112,4 +113,25 @@ Update.prototype._setEqual = function(hash) {
   return this;
 };
 
-Command.addCloningMethods.call(Update, ['where', 'whereEqual', 'set', 'setEqual']);
+/** Update#_returning(columns: string[])
+    Update#_returning(...columns: string[])
+
+Call like:
+
+    db.Update('users').set({active: false}).returning('*')
+
+to get back all updated rows.
+*/
+Update.prototype._returning = function(columns) {
+  if (util.isArray(columns)) {
+    util.pushAll(this.statement.returning, columns);
+  }
+  else {
+    for (var i = 0; i < arguments.length; i++) {
+      this.statement.returning.push(arguments[i]);
+    }
+  }
+  return this;
+};
+
+Command.addCloningMethods.call(Update, ['where', 'whereEqual', 'set', 'setEqual', 'returning']);

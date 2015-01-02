@@ -6,8 +6,9 @@ function Insert(table) {
   Command.call(this);
   this.statement.table = table;
   this.statement.columns = [];
-  // should be as long as columns; often $variables, but not necessarily
+  // values should be as long as columns; it'll often be $variables, but not necessarily
   this.statement.values = [];
+  this.statement.returning = [];
 }
 util.inherits(Insert, Command);
 
@@ -31,8 +32,10 @@ Insert.prototype.toSQL = function() {
     parts.push('VALUES (' + this.statement.values.join(', ') + ')');
   }
 
-  // might as well, no?
-  parts.push('RETURNING *');
+  if (this.statement.returning.length > 0) {
+    // not default since sqlite can't handle it
+    parts.push('RETURNING', this.statement.returning.join(', '));
+  }
 
   return parts.join(' ');
 };
@@ -43,12 +46,12 @@ Insert.prototype._add = function(column, value) {
   this.statement.values.push('$' + column);
   return this;
 };
-Insert.prototype._set = function(hash) {
-  /**
-  Like Update#set, this function presumes that all object keys are safe, and all object values are unsafe.
+/**
+Like Update#set, this function presumes that all object keys are safe, and all object values are unsafe.
 
-  Ignore undefined values.
-  */
+Ignore undefined values.
+*/
+Insert.prototype._set = function(hash) {
   for (var column in hash) {
     var value = hash[column];
     if (value !== undefined) {
@@ -57,7 +60,28 @@ Insert.prototype._set = function(hash) {
   }
   return this;
 };
+/** Insert#_returning(columns: string[])
+    Insert#_returning(...columns: string[])
 
-Command.addCloningMethods.call(Insert, ['add', 'set']);
+Call like:
+
+    db.Insert('users').set({name: 'Chris'}).returning('*')
+
+to get back the full inserted row. Useful if you want the primary key or
+other generated / default values.
+*/
+Insert.prototype._returning = function(columns) {
+  if (util.isArray(columns)) {
+    util.pushAll(this.statement.returning, columns);
+  }
+  else {
+    for (var i = 0; i < arguments.length; i++) {
+      this.statement.returning.push(arguments[i]);
+    }
+  }
+  return this;
+};
+
+Command.addCloningMethods.call(Insert, ['add', 'set', 'returning']);
 
 module.exports = Insert;
