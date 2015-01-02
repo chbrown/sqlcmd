@@ -128,6 +128,8 @@ Connection.prototype.executePatches = function(patches_table, patches_dirpath, c
               if (err) return callback(err);
 
               db.executeSQL(file_contents, function(err) {
+                if (err) return callback(err);
+
                 db.Insert(patches_table)
                 .set({filename: unapplied_filename})
                 .execute(function(err) {
