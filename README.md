@@ -79,6 +79,22 @@ I've elided error handling below, for concision, but in practice that's a recipe
 TODO: more documentation. (When is that not a TODO?)
 
 
+## Ideas
+
+Every SQL command is an instance of a general SQL Command class, and can be modified (mutated) or built upon to create new instances. SQL syntax is regular, but we want to be able to build commands (especially queries) incrementally.
+
+Most SQL databases loosely adhere to a standard, but every implementation has extensions or flexibility for better compatibility. This library does not make provisions for different implementations. Instead, it is string-based, so if you use it to create a table, you need to know what types and constraints your database implementation supports.
+
+
+## Commands
+
+SQL parameterization embeds references to external objects in plain strings.
+Strings are just arrays of characters, so a parameterized string is just an array of strings interspersed with parameter objects.
+We could model those sequences as an array of stuff like "SqlString" and "SqlParameter" instances, but since pg and sqlite3 both distinguish between the query string and a parameters object/array when performing queries, we'll use a similar model. When
+
+`sqlcmd` comes with several built-in commands. These classes have both mutable and immutable interfaces; the mutable interface uses method names prefixed by `_`. These methods modify the command instance's statement and/or parameters and `return this;`, so that they're chainable. The non-prefixed methods clone the command instance first, and then perform the mutable command on the newly created copy, returning the copy and leaving the original command untouched. Every command must also implement the `Command#toSQL()`, which takes no arguments and returns a single string. It does not modify the command.
+
+
 ## License
 
 Copyright 2014 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).

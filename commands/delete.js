@@ -1,48 +1,48 @@
 /*jslint node: true */
-var util = require('util');
+var util = require('util-enhanced');
+var Command = require('../command');
 
-var lib = require('../lib');
-var Command = require('./').Command;
-
-var Delete = exports.Delete = function(from) {
+function Delete(table) {
   Command.call(this);
-  this.from = from;
-  this.wheres = [];
-};
+  this.statement.table = table;
+  this.statement.wheres = [];
+}
 util.inherits(Delete, Command);
 
-Delete.prototype.clone = function() {
-  var del = new Delete(this.from);
-  del.wheres = lib.clone(this.wheres);
-  del.context = lib.clone(this.context);
-  del.connection = this.connection;
-  return del;
-};
-Delete.prototype._sql = function() {
-  var parts = ['DELETE FROM', this.from];
-  if (this.wheres.length > 0) {
-    parts.push('WHERE ' + this.wheres.join(' AND '));
+Delete.prototype.toSQL = function() {
+  var parts = ['DELETE FROM', this.statement.table];
+  if (this.statement.wheres.length > 0) {
+    parts.push('WHERE', this.statement.wheres.join(' AND '));
   }
   return parts.join(' ');
 };
 
-/** --- MUTABLE --- */
 Delete.prototype._where = function(sql /*, args... */) {
-  var args = lib.slice(arguments, 1);
-  if (args.length > 0) {
-    sql = this._interpolate(sql, args);
+  var args = [];
+  for (var i = 1; i < arguments.length; i++) {
+    args[i] = arguments[i];
   }
-  this.wheres.push(sql);
+
+  sql = this.interpolateQuestionMarks(sql, args);
+  this.statement.wheres.push(sql);
   return this;
 };
+
+/** Delete#_whereEqual(hash: object)
+
+Just like Select._whereEqual: be careful with the keys.
+*/
 Delete.prototype._whereEqual = function(hash) {
-  /** Just like Select._whereEqual (be careful with the keys) */
-  for (var key in hash) {
-    if (hash[key] !== undefined) {
-      this._where(key + ' = ?', hash[key]);
+  for (var column in hash) {
+    var value = hash[column];
+    if (value !== undefined) {
+      this.statement.wheres.push(column + ' = $' + column);
+      this.parameters[column] = value;
     }
   }
   return this;
 };
 
-Command.immutable.call(Delete, ['where', 'whereEqual']);
+Command.addCloningMethods.call(Delete, ['where', 'whereEqual']);
+
+module.exports = Delete;

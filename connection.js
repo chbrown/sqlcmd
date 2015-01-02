@@ -1,184 +1,137 @@
 /*jslint node: true */
-var pg = require('pg');
 var fs = require('fs');
-var lib = require('./lib');
+var path = require('path');
 
-var Select = require('./commands/select').Select;
-var Insert = require('./commands/insert').Insert;
-var Update = require('./commands/update').Update;
-var Delete = require('./commands/delete').Delete;
+/** new Connection(options: any)
 
-var Connection = exports.Connection = function(options) {
-  /** configure connection with options to be used for each query */
+Connection provides a single interface to functionality of sqlcmd, and stores
+configuration defaults to be used with every query. The options are unused in
+sqlcmd; only sqlcmd-pg, sqlcmd-sqlite3, etc., use the options argument.
+*/
+var Connection = module.exports = function(options) {
   this.options = options;
 };
-Connection.prototype.connect = function(callback) {
-  /**
-  Very shallow layer to run pg.connect.
 
-  callback: function(err, client, done) { ... }
+/** Connection.addCommand(name: string, CommandConstructor: typeof Command)
 
-  The user is responsible for running done() when done!
-  */
-  pg.connect(this.options, callback);
-};
-Connection.prototype.end = function() {
-  pg.end();
-};
-Connection.prototype.query = function(sql, args, callback) {
-  /** Run sql query on configured SQL connection
-
-  callback: function(Error | null, [Object] | null)
-  */
-  var logger = this.logger;
-  pg.connect(this.options, function(err, client, done) {
-    if (err) return callback ? callback(err) : err;
-
-    if (logger) logger.info('Executing SQL "%s" with variables: %j', sql, args);
-    client.query(sql, args, function(err, result) {
-      if (err && logger) logger.error('Query error: %j', err);
-      else if (logger) logger.debug('Query result: %j', result);
-      done();
-      if (callback) {
-        callback(err, result ? result.rows : null);
-      }
-    });
-  });
+Assuming that CommandConstructor is a typical constructor, binds it to
+a non-constructor function at Connection#<name>, creates a new instance of the
+command, and sets command.connection to `this`. CommandConstructor's type should
+be a subclass of sqlcmd.Command.
+*/
+Connection.addCommand = function(name, CommandConstructor) {
+  this.prototype[name] = function(/* args... */) {
+    // var command = new CommandConstructor(opts);
+    var command = Object.create(CommandConstructor.prototype);
+    // using Function.apply is one of the only optimizable ways to use `arguments` in a function call
+    // if the constructor returns a value, just ignore it.
+    CommandConstructor.apply(command, arguments);
+    // set the command's connection property, which is the main point of this function
+    command.connection = this;
+    return command;
+  };
 };
 
-// do this better:
-Connection.prototype.Select = function(from) {
-  var command = new Select(from);
-  command.connection = this;
-  return command;
-};
-Connection.prototype.Insert = function(into) {
-  var command = new Insert(into);
-  command.connection = this;
-  return command;
-};
-Connection.prototype.Update = function(table) {
-  var command = new Update(table);
-  command.connection = this;
-  return command;
-};
-Connection.prototype.Delete = function(from) {
-  var command = new Delete(from);
-  command.connection = this;
-  return command;
+Connection.addCommand('Select', require('./commands/select'));
+Connection.addCommand('Insert', require('./commands/insert'));
+Connection.addCommand('Update', require('./commands/update'));
+Connection.addCommand('Delete', require('./commands/delete'));
+Connection.addCommand('CreateTable', require('./commands/create_table'));
+
+/** Connection#executeCommand(command: Command, callback: (err: Error, results: any[]))
+
+Execute a sqlcmd Command instance against this connection.
+*/
+Connection.prototype.executeCommand = function(command, callback) {
+  throw new Error('not implemented');
 };
 
-Connection.prototype.executeSQLFile = function(filepath, callback) {
-  /** Read SQL from an arbitrary filepath and execute it.
+/** Connection#executeSQL(sql: string, callback: (err: Error, results: any[]))
 
-  If you thought connection.createDatabase was unsafe, you got another think coming.
+Execute a plain SQL query against this connection.
+*/
+Connection.prototype.executeSQL = function(sql, callback) {
+  throw new Error('Not implemented');
+};
 
-      callback: function(error?: Error)
-  */
-  var self = this;
-  fs.readFile(filepath, {encoding: 'utf8'}, function(err, sql) {
+/** Connection#executePatches(patches_table: string,
+                              patches_dirpath: string,
+                              callback: (error: Error, filenames?: string[]))
+
+Apply SQL patches to a database exactly once.
+
+Similar to migration, but it only works one way.
+
+1) Given a directory of SQL files
+2) Find which ones have not been applied to the database
+3) Apply the new SQL files to the database as needed, in alphabetical order
+4) Record which files have been applied to the database in a special table
+
+There is no up / down distinction, only applied / not-yet-applied.
+
+There is no transaction support, so if it encounters an error, it may end up
+in an inconsistent state.
+
+patches_table
+  The name of the table to (created if needed), which will record the
+  application of patches onto the database.
+patches_dirpath
+  The directory containing .sql files to run as patches
+callback
+  Called whenever an error occurs, or all patches have
+*/
+Connection.prototype.executePatches = function(patches_table, patches_dirpath, callback) {
+  var db = this;
+  db.CreateTable(patches_table)
+  .add([
+    'filename TEXT NOT NULL',
+    'applied TIMESTAMP DEFAULT current_timestamp NOT NULL',
+  ])
+  .execute(function(err) {
     if (err) return callback(err);
-    self.query(sql, [], callback);
-  });
-};
+    fs.readdir(patches_dirpath, function(err, filenames) {
+      if (err) return callback(err);
 
-// Database commands (uses same config except with 'postgres' database
-Connection.prototype.postgresConnection = function(callback) {
-  var postgres_options = lib.extend({}, this.options, {database: 'postgres'});
-  var connection = new Connection(postgres_options);
-  connection.logger = this.logger;
-  return connection;
-};
-Connection.prototype.databaseExists = function(callback) {
-  /** Check if the database used by this connection exists.
-  This method connects to the special 'postgres' database with the same connection credentials.
+      db.Select(patches_table)
+      .execute(function(err, patches) {
+        // patches: {filename: string, applied: Date}[]
+        if (err) return callback(err);
+        // applied_filenames: string[]
+        var applied_filenames = patches.map(function(patch) {
+          return patch.filename;
+        });
 
-      callback: function(err, exists: Boolean)
-  */
-  var postgres_db = this.postgresConnection();
-  postgres_db.Select('pg_catalog.pg_database')
-  .where('datname = ?', this.options.database)
-  .execute(function(err, rows) {
-    if (err) return callback(err);
+        var unapplied_filenames = filenames.filter(function(filename) {
+          return applied_filenames.indexOf(filename) === -1 && filename.match(/\.sql$/);
+        }).sort();
 
-    callback(null, rows.length > 0);
-  });
-  postgres_db.end();
-};
+        var newly_applied_filenames = [];
 
-// CREATE DATABASE and helper
-Connection.prototype.createDatabase = function(callback) {
-  /** Create the database used by this connection.
+        (function loop() {
+          var unapplied_filename = unapplied_filenames.shift();
+          if (unapplied_filename === undefined) {
+            // no more filenames; we're finished!
+            return callback(null, newly_applied_filenames);
+          }
+          else {
+            var unapplied_filepath = path.join(patches_dirpath, unapplied_filename);
+            fs.readFile(unapplied_filepath, {encoding: 'utf8'}, function(err, file_contents) {
+              if (err) return callback(err);
 
-  We can't specify the database name as an argument, so we just put it into the string raw.
-  This is unsafe, of course, but if you want to break your own computer, go for it.
+              db.executeSQL(file_contents, function(err) {
+                db.Insert(patches_table)
+                .set({filename: unapplied_filename})
+                .execute(function(err, patches) {
+                  if (err) return callback(err);
 
-      callback: function(error?: Error)
-  */
-  var postgres_db = this.postgresConnection();
-  postgres_db.query('CREATE DATABASE "' + this.options.database + '"', [], callback);
-  postgres_db.end();
-};
-Connection.prototype.createDatabaseIfNotExists = function(callback) {
-  /** Check if the database exists.
-  1. If it does not exist, create it.
-  2. If it already exists, do nothing.
-
-      callback: function(error: Error, created?: boolean)
-  */
-  var self = this;
-  this.databaseExists(function(err, exists) {
-    if (err) return callback(err);
-    if (exists) return callback(null, false);
-
-    self.createDatabase(function(err) {
-      callback(err, err ? undefined : true);
-    });
-  });
-};
-
-// DROP DATABASE and helper
-Connection.prototype.dropDatabase = function(callback) {
-  /** Drop the database used by this connection.
-
-  Vulnerable to injection via the database name!
-
-      callback: function(error?: Error)
-  */
-  var postgres_db = this.postgresConnection();
-  postgres_db.query('DROP DATABASE "' + this.options.database + '"', [], callback);
-  postgres_db.end();
-};
-Connection.prototype.dropDatabaseIfExists = function(callback) {
-  /** Check if the database exists.
-  1. If it does not exist, do nothing.
-  2. If it does exist, drop it.
-
-      callback: function(error: Error, dropped?: boolean)
-  */
-  var self = this;
-  this.databaseExists(function(err, exists) {
-    if (err) return callback(err);
-    if (!exists) return callback(null, false);
-
-    self.dropDatabase(function(err) {
-      callback(err, err ? undefined : true);
-    });
-  });
-};
-
-// all-in-one
-Connection.prototype.initializeDatabase = function(sql_filepath, callback) {
-  /** Create the database if it doesn't exist and execute the specified sql on it.
-
-  callback: function(error: Error, initialized?: boolean)
-  */
-  var self = this;
-  this.createDatabaseIfNotExists(function(err, exists) {
-    if (err) return callback(err);
-    if (exists) return callback(null, false);
-    self.executeSQLFile(sql_filepath, function(err) {
-      callback(err, err ? undefined : true);
+                  newly_applied_filenames.push(unapplied_filename);
+                  loop();
+                });
+              });
+            });
+          }
+        })();
+      });
     });
   });
 };

@@ -1,14 +1,22 @@
-/*jslint node: true */
-var tap = require('tap');
+/*jslint node: true */ /*globals describe, it */
+var assert = require('assert');
 
-var Select = require('../commands/select').Select;
+var db = require('../');
 
-tap.test('Select SQL', function(t) {
-  var select = new Select('users');
-  t.equal(select._sql(), 'SELECT * FROM users', 'blank sql should render simply');
+describe('db.Select(...)', function() {
+  var command = db.Select('users');
+  it('should equal literal string', function() {
+    assert.equal(command.toSQL(), 'SELECT * FROM users');
+  });
+  it('should not be affected by limit() call', function() {
+    var modified_command = command.limit(100);
+    assert.equal(command.toSQL(), 'SELECT * FROM users');
+  });
+});
 
-  var select_limit = select.limit(100);
-  t.equal(select_limit.toUnsafeSQL(), 'SELECT * FROM users LIMIT 100', 'limit should be appended');
-
-  t.end();
+describe('db.Select(...).add(...).where(...)', function() {
+  var command = db.Select('users').add('id').where('active = TRUE');
+  it('should equal literal string', function() {
+    assert.equal(command.toSQL(), 'SELECT id FROM users WHERE active = TRUE');
+  });
 });

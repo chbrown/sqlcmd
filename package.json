@@ -1,12 +1,12 @@
 {
   "name": "sqlcmd",
   "version": "0.2.13",
-  "description": "SQL command builder. Incremental and immutable.",
+  "description": "SQL command builder. String-based and incremental, with mutable and immutable interfaces.",
   "keywords": [
     "sql",
-    "build",
+    "command",
     "string",
-    "command"
+    "builder"
   ],
   "homepage": "https://github.com/chbrown/sqlcmd",
   "repository": {
@@ -20,13 +20,12 @@
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "dependencies": {
-    "pg": "*"
+    "util-enhanced": "*"
   },
-  "main": "connection.js",
   "devDependencies": {
-    "tap": "*"
+    "mocha": "*"
   },
   "scripts": {
-    "test": "tap test"
+    "test": "mocha test"
   }
 }
