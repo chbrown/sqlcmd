@@ -46,20 +46,26 @@ Connection.addCommand('Update', require('./commands/update'));
 Connection.addCommand('Delete', require('./commands/delete'));
 Connection.addCommand('CreateTable', require('./commands/create_table'));
 
-/** Connection#executeCommand(command: Command, callback: (err: Error, results: any[]))
+/** Connection#executeCommand(command: Command,
+                              callback: (error: Error, rows: object[]))
 
-Execute a sqlcmd Command instance against this connection.
+Execute a sqlcmd Command instance against this connection. Usually called by
+Command#execute() after the Command instance has been initialized with a
+sqlcmd.Connection.
 */
 Connection.prototype.executeCommand = function(command, callback) {
   throw new Error('not implemented');
 };
 
-/** Connection#executeSQL(sql: string, callback: (err: Error, results: any[]))
+/** Connection#executeSQL(sql: string,
+                          args: any[] | {[index: string]: any},
+                          callback: (error: Error, rows: object[]))
 
-Execute a plain SQL query against this connection.
+Execute a plain SQL query, potentially with prepared parameters, against this
+sqlcmd.Connection.
 */
-Connection.prototype.executeSQL = function(sql, callback) {
-  throw new Error('Not implemented');
+Connection.prototype.executeSQL = function(sql, args, callback) {
+  throw new Error('not implemented');
 };
 
 /** Connection#executePatches(patches_table: string,
@@ -127,7 +133,7 @@ Connection.prototype.executePatches = function(patches_table, patches_dirpath, c
             fs.readFile(unapplied_filepath, {encoding: 'utf8'}, function(err, file_contents) {
               if (err) return callback(err);
 
-              db.executeSQL(file_contents, function(err) {
+              db.executeSQL(file_contents, null, function(err) {
                 if (err) return callback(err);
 
                 db.Insert(patches_table)
