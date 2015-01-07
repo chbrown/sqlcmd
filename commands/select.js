@@ -9,8 +9,6 @@ function Select(table) {
   this.statement.wheres = [];
   this.statement.group_bys = [];
   this.statement.order_bys = [];
-  // this.query_limit = null;
-  // this.query_offset = null;
 }
 util.inherits(Select, Command);
 
@@ -31,11 +29,11 @@ Select.prototype.toSQL = function() {
   }
   // group by ...
   if (this.statement.group_bys.length > 0) {
-    parts.push('GROUP BY ' + this.statement.group_bys.join(', '));
+    parts.push('GROUP BY', this.statement.group_bys.join(', '));
   }
   // order by ...
   if (this.statement.order_bys.length > 0) {
-    parts.push('ORDER BY ' + this.statement.order_bys.join(', '));
+    parts.push('ORDER BY', this.statement.order_bys.join(', '));
   }
   // limit
   if (this.statement.limit) {
@@ -49,18 +47,26 @@ Select.prototype.toSQL = function() {
 };
 
 Select.prototype._add = function(/* columns... */) {
-  for (var i = 0; i < arguments.length; i++) {
+  for (var i = 0, l = arguments.length; i < l; i++) {
     this.statement.columns.push(arguments[i]);
   }
   return this;
 };
+/** Select#_where(sql: string, ...args: any[])
+
+Add a WHERE statement to be AND-merged with any other WHERE statements.
+
+sql
+  Any SQL expression that evaluates to a truth value. It may contain multiple
+  "?" placeholders -- as many ?'s as there are items in the args array.
+args
+  SQL parameters to accompany the given SQL expression [optional]
+
+See also: Select#_whereEqual(...)
+*/
 Select.prototype._where = function(sql /*, args... */) {
-  /**
-  where() is not overloaded; call it with a string (and maybe parameterized values)
-  If you want to call it with an object, use whereEqual().
-  */
   var args = [];
-  for (var i = 1; i < arguments.length; i++) {
+  for (var i = 1, l = arguments.length; i < l; i++) {
     args.push(arguments[i]);
   }
 
@@ -112,14 +118,14 @@ Select.prototype._whereIn = function(column, list) {
 };
 Select.prototype._groupBy = function(/* columns... */) {
   /** Vulnerable to SQL injection! */
-  for (var i = 0; i < arguments.length; i++) {
+  for (var i = 0, l = arguments.length; i < l; i++) {
     this.statement.group_bys.push(arguments[i]);
   }
   return this;
 };
 Select.prototype._orderBy = function(/* columns... */) {
   /** Vulnerable to SQL injection! */
-  for (var i = 0; i < arguments.length; i++) {
+  for (var i = 0, l = arguments.length; i < l; i++) {
     this.statement.order_bys.push(arguments[i]);
   }
   return this;
@@ -135,7 +141,15 @@ Select.prototype._limit = function(limit) {
   return this;
 };
 
-Command.addCloningMethods.call(Select,
-  ['add', 'where', 'whereEqual', 'whereIn', 'groupBy', 'orderBy', 'offset', 'limit']);
+Command.addCloningMethods.call(Select, [
+  'add',
+  'where',
+  'whereEqual',
+  'whereIn',
+  'groupBy',
+  'orderBy',
+  'offset',
+  'limit',
+]);
 
 module.exports = Select;

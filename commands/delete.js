@@ -19,7 +19,7 @@ Delete.prototype.toSQL = function() {
 
 Delete.prototype._where = function(sql /*, args... */) {
   var args = [];
-  for (var i = 1; i < arguments.length; i++) {
+  for (var i = 1, l = arguments.length; i < l; i++) {
     args.push(arguments[i]);
   }
 
@@ -43,6 +43,9 @@ Delete.prototype._whereEqual = function(hash) {
   return this;
 };
 
-Command.addCloningMethods.call(Delete, ['where', 'whereEqual']);
+Command.addCloningMethods.call(Delete, [
+  'where',
+  'whereEqual',
+]);
 
 module.exports = Delete;

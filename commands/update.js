@@ -2,13 +2,13 @@
 var util = require('util-enhanced');
 var Command = require('../command');
 
-var Update = module.exports = function(table) {
+function Update(table) {
   Command.call(this);
   this.statement.table = table;
   this.statement.sets = []; // equations / equalities (column-expression pairs)
   this.statement.wheres = [];
   this.statement.returning = [];
-};
+}
 util.inherits(Update, Command);
 
 /** Update#toSQL()
@@ -34,7 +34,7 @@ Update.prototype.toSQL = function() {
 
 Update.prototype._where = function(sql /*, args... */) {
   var args = [];
-  for (var i = 1; i < arguments.length; i++) {
+  for (var i = 1, l = arguments.length; i < l; i++) {
     args.push(arguments[i]);
   }
 
@@ -67,7 +67,7 @@ and have a separate _setEqual
 */
 Update.prototype._set = function(sql /*, args... */) {
   var args = [];
-  for (var i = 1; i < arguments.length; i++) {
+  for (var i = 1, l = arguments.length; i < l; i++) {
     args.push(arguments[i]);
   }
 
@@ -127,11 +127,19 @@ Update.prototype._returning = function(columns) {
     util.pushAll(this.statement.returning, columns);
   }
   else {
-    for (var i = 0; i < arguments.length; i++) {
+    for (var i = 0, l = arguments.length; i < l; i++) {
       this.statement.returning.push(arguments[i]);
     }
   }
   return this;
 };
 
-Command.addCloningMethods.call(Update, ['where', 'whereEqual', 'set', 'setEqual', 'returning']);
+Command.addCloningMethods.call(Update, [
+  'where',
+  'whereEqual',
+  'set',
+  'setEqual',
+  'returning',
+]);
+
+module.exports = Update;

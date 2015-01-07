@@ -31,6 +31,9 @@ CreateTable.prototype._ifNotExists = function() {
   return this;
 };
 
-Command.addCloningMethods.call(CreateTable, ['add', 'ifNotExists']);
+Command.addCloningMethods.call(CreateTable, [
+  'add',
+  'ifNotExists',
+]);
 
 module.exports = CreateTable;

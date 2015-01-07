@@ -75,13 +75,17 @@ Insert.prototype._returning = function(columns) {
     util.pushAll(this.statement.returning, columns);
   }
   else {
-    for (var i = 0; i < arguments.length; i++) {
+    for (var i = 0, l = arguments.length; i < l; i++) {
       this.statement.returning.push(arguments[i]);
     }
   }
   return this;
 };
 
-Command.addCloningMethods.call(Insert, ['add', 'set', 'returning']);
+Command.addCloningMethods.call(Insert, [
+  'add',
+  'set',
+  'returning',
+]);
 
 module.exports = Insert;
