@@ -133,7 +133,7 @@ Connection.prototype.executePatches = function(patches_table, patches_dirpath, c
             fs.readFile(unapplied_filepath, {encoding: 'utf8'}, function(err, file_contents) {
               if (err) return callback(err);
 
-              db.executeSQL(file_contents, null, function(err) {
+              db.executeSQL(file_contents, [], function(err) {
                 if (err) return callback(err);
 
                 db.Insert(patches_table)
