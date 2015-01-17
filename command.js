@@ -72,6 +72,12 @@ If there are more ?'s than items in args, it will use the parameterized value,
 ?'s, those later items will be ignored.
 */
 Command.prototype.interpolateQuestionMarks = function(sql, args) {
+  if (typeof(sql) !== 'string') {
+    var message = 'Cannot interpolate question marks in object of type "' + typeof(sql) + '"; only strings are allowed.';
+    var error = new Error(message);
+    error.object = sql;
+    throw error;
+  }
   var self = this;
   return sql.replace(/\?/g, function(match) {
     var name = (self.parameters_i++).toString();
