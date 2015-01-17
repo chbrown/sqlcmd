@@ -20,7 +20,7 @@
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "dependencies": {
-    "util-enhanced": "*"
+    "util-enhanced": "~0.1.2"
   },
   "devDependencies": {
     "mocha": "*"

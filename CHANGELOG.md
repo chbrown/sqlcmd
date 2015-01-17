@@ -1,3 +1,9 @@
+# `1.0.6` (2015-01-17)
+
+* Throw a more descriptive error when `Command#interpolateQuestionMarks(string, args)` is called improperly.
+* Bump `util-enhanced` version to `0.1.2`, which fixes a bug that involved cloning `null` as `{}`.
+
+
 # `1.0.5` (2015-01-07)
 
 * Calling `Database#all(sql_string, null, callback)` would fail in SQLite when called in the `Connection#executePatches(...)` method. Using `[]` to denote empty parameters instead of `null` when calling `Connection#executeSQL(sql_string, [], callback)` solves this problem in SQLite as well as being cross-compatible with PostgreSQL.
