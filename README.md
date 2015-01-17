@@ -36,8 +36,9 @@ I've elided error handling below, for concision, but in practice that's a recipe
 
     db.Insert('friendships')
     .set({source: 'Chris', target: 'Jess'})
+    .returning('*')
     .execute(function(err, rows) {
-      // Insert() adds "RETURNING *" to the query, so we get back a list of one row.
+      // we've asked for "RETURNING *", so we get back a list of one row.
       console.log('inserted row: %j', rows[0]);
     });
 
