@@ -3,7 +3,7 @@ var Select = require('./select');
 
 function SelectOne(table) {
   Select.call(this, table);
-  this.statement.limit = 1;
+  this.statement.limit = '1';
 }
 util.inherits(SelectOne, Select);
 
@@ -15,3 +15,5 @@ SelectOne.prototype.execute = function(callback) {
     callback(null, rows[0]);
   });
 };
+
+module.exports = SelectOne;
