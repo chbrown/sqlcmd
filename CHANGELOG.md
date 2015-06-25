@@ -1,3 +1,8 @@
+# `1.1.1` (2015-06-25)
+
+* Export `SelectOne` command.
+
+
 # `1.1.0` (2015-06-25)
 
 * Add `SelectOne` command, similar to `Select`, but automatically adds a `LIMIT 1`, and calls the callback with a single row.
