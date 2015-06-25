@@ -1,4 +1,3 @@
-/*jslint node: true */
 var util = require('util-enhanced');
 
 /** new Command()

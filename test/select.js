@@ -1,4 +1,4 @@
-/*jslint node: true */ /*globals describe, it */
+/*globals describe, it */
 var assert = require('assert');
 
 var db = require('../');

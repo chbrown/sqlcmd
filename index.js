@@ -1,4 +1,3 @@
-/*jslint node: true */
 var Connection = require('./connection');
 
 /** set up default connection, so that the user can say:
