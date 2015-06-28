@@ -42,6 +42,7 @@ Connection.addCommand = function(name, CommandConstructor) {
 Connection.addCommand('Select', require('./commands/select'));
 Connection.addCommand('SelectOne', require('./commands/select_one'));
 Connection.addCommand('Insert', require('./commands/insert'));
+Connection.addCommand('InsertOne', require('./commands/insert_one'));
 Connection.addCommand('Update', require('./commands/update'));
 Connection.addCommand('Delete', require('./commands/delete'));
 Connection.addCommand('CreateTable', require('./commands/create_table'));
