@@ -1,3 +1,8 @@
+# `1.2.1` (2015-06-27)
+
+* Reduce `util-enhanced` usage.
+
+
 # `1.2.0` (2015-06-27)
 
 * Add `InsertOne` command, exactly like `Insert`, but calls the callback with the first row if there are result rows.
