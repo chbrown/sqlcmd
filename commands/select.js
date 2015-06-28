@@ -1,4 +1,4 @@
-var util = require('util-enhanced');
+var util = require('util');
 var Command = require('../command');
 
 function Select(table) {

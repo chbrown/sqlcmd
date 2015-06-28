@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var events = require('events');
-var util = require('util-enhanced');
+var util = require('util');
 
 /** new Connection(options: any)
 

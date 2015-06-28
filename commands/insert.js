@@ -1,4 +1,4 @@
-var util = require('util-enhanced');
+var util = require('util');
 var Command = require('../command');
 
 function Insert(table) {
@@ -71,7 +71,7 @@ other generated / default values.
 */
 Insert.prototype._returning = function(columns) {
   if (util.isArray(columns)) {
-    util.pushAll(this.statement.returning, columns);
+    Array.prototype.push.apply(this.statement.returning, columns);
   }
   else {
     for (var i = 0, l = arguments.length; i < l; i++) {

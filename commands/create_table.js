@@ -1,4 +1,4 @@
-var util = require('util-enhanced');
+var util = require('util');
 var Command = require('../command');
 
 function CreateTable(table) {
@@ -21,7 +21,7 @@ CreateTable.prototype.toSQL = function() {
 };
 
 CreateTable.prototype._add = function(columns) {
-  util.pushAll(this.statement.columns, columns);
+  Array.prototype.push.apply(this.statement.columns, columns);
   return this;
 };
 

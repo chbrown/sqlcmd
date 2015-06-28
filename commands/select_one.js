@@ -1,4 +1,4 @@
-var util = require('util-enhanced');
+var util = require('util');
 var Select = require('./select');
 
 function SelectOne(table) {
@@ -9,8 +9,8 @@ util.inherits(SelectOne, Select);
 
 SelectOne.prototype.execute = function(callback) {
   return this.connection.executeCommand(this, function(err, rows) {
-    if (err) return callback(err, null);
-    if (rows.length === 0) return callback(null, null);
+    if (err) return callback(err);
+    if (rows.length === 0) return callback(null);
 
     callback(null, rows[0]);
   });
