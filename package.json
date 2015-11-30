@@ -11,17 +11,15 @@
   "homepage": "https://github.com/chbrown/sqlcmd",
   "repository": {
     "type": "git",
-    "url": "git://github.com/chbrown/sqlcmd.git"
+    "url": "https://github.com/chbrown/sqlcmd.git"
   },
   "bugs": {
     "email": "Christopher Brown <io@henrian.com>",
-    "url": "http://github.com/chbrown/sqlcmd/issues"
+    "url": "https://github.com/chbrown/sqlcmd/issues"
   },
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
-  "dependencies": {
-    "util-enhanced": "~0.1.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "*"
   },

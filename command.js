@@ -1,4 +1,36 @@
-var util = require('util-enhanced');
+
+/** clone(obj)
+
+Deep-copy a plain object or array. There is no special handling for other
+types of objects; it simply copies everything else by reference.
+*/
+function clone(obj) {
+  // typeof null == 'object' (wat), so we check for that case early.
+  if (obj === null) {
+    return obj;
+  }
+  else if (Array.isArray(obj)) {
+    return obj.map(clone);
+  }
+  // typeof new Date() == 'object', so we check for that case too.
+  else if (obj instanceof Date) {
+    return new Date(obj);
+  }
+  else if (typeof obj === 'object') {
+    var copy = {};
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        copy[key] = clone(obj[key]);
+      }
+    }
+    return copy;
+  }
+  else {
+    // typeof undefined == 'undefined', so that will pass through here,
+    // along with strings, numbers, true, and false.
+    return obj;
+  }
+}
 
 /** new Command()
 Command represents an abstract SQL command.
@@ -36,8 +68,8 @@ Command.prototype.execute = function(callback) {
 Command.prototype.clone = function() {
   var copy = Object.create(this.constructor.prototype);
   copy.connection = this.connection;
-  copy.statement = util.clone(this.statement);
-  copy.parameters = util.clone(this.parameters);
+  copy.statement = clone(this.statement);
+  copy.parameters = clone(this.parameters);
   copy.parameters_i = this.parameters_i;
   return copy;
 };
