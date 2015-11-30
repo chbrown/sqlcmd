@@ -21,9 +21,10 @@
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "dependencies": {},
   "devDependencies": {
+    "babel-core": "^5.0.0",
     "mocha": "*"
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha --compilers js:babel-core/register tests/"
   }
 }
