@@ -1,3 +1,9 @@
+# `1.3.0` (2015-11-30)
+
+* Remove `util-enhanced` dependency.
+* Refactor `executePatches` functionality to [`sql-patch`](https://www.npmjs.com/package/sql-patch).
+
+
 # `1.2.1` (2015-06-27)
 
 * Reduce `util-enhanced` usage.
