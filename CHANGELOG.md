@@ -1,3 +1,8 @@
+# `2.0.1` (2015-12-05)
+
+* Merge <del>`testDependencies`</del> into `devDependencies` so that mocha actually gets installed.
+
+
 # `2.0.0` (2015-12-05)
 
 * Add `UpdateOne` command.
