@@ -4,7 +4,7 @@ JAVASCRIPT := $(TYPESCRIPT:%.ts=%.js)
 
 all: $(JAVASCRIPT)
 
-$(BIN)/tsc:
+$(BIN)/tsc $(BIN)/mocha:
 	npm install
 
 %.js: %.ts $(BIN)/tsc
@@ -17,4 +17,4 @@ clean:
 	rm -f $(JAVASCRIPT) $(TYPESCRIPT:%.ts=%.d.ts)
 
 test: $(JAVASCRIPT)
-	mocha --compilers js:babel-core/register tests/
+	$(BIN)/mocha --compilers js:babel-core/register tests/
