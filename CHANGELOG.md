@@ -1,3 +1,11 @@
+# `2.0.0` (2015-12-05)
+
+* Add `UpdateOne` command.
+* Rewrite in TypeScript.
+* Remove singleton module/Connection polymorphism.
+  - Replace `var db = require('sqlcmd');` with `import {Connection} from 'sqlcmd'; var db = new Connection();`
+
+
 # `1.3.0` (2015-11-30)
 
 * Remove `util-enhanced` dependency.
