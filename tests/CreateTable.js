@@ -1,7 +1,8 @@
 import assert from 'assert';
 import {describe, it} from 'mocha';
 
-var db = require('../');
+import {Connection} from '..';
+const db = new Connection();
 
 describe('db.CreateTable(...)', () => {
   var command = db.CreateTable('users');
@@ -9,7 +10,7 @@ describe('db.CreateTable(...)', () => {
     assert.equal(command.toSQL(), 'CREATE TABLE users (  )');
   });
   it('should not be affected by add() call', () => {
-    var modified_command = command.add(['modified DATETIME']);
+    command.add(['modified DATETIME']);
     assert.equal(command.toSQL(), 'CREATE TABLE users (  )');
   });
   it('should be affected by _add() call', () => {

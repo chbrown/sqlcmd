@@ -1,24 +1,17 @@
-[![Travis CI Build Status](https://travis-ci.org/chbrown/sqlcmd.svg)](https://travis-ci.org/chbrown/sqlcmd)
-
 # sqlcmd
 
-Coarse-grained compositional SQL.
+[![Travis CI Build Status](https://travis-ci.org/chbrown/sqlcmd.svg)](https://travis-ci.org/chbrown/sqlcmd)
+[![npm version](https://badge.fury.io/js/sqlcmd.svg)](https://badge.fury.io/js/sqlcmd)
+
+Coarse-grained partially composable SQL.
 
     npm install --save sqlcmd
-
-Or in your `package.json`:
-
-    { ...
-      "dependencies": {
-        "sqlcmd": "~1.0.1",
-        ...
-      }
-    }
 
 
 ### Basic queries
 
-    var db = require('sqlcmd');
+    import {Connection} from 'sqlcmd';
+    const db = new Connection();
 
 `Select()`, `Insert()`, `Update()`, and `Delete()` are all functions of `db` that take a single argument, the name of the table they are operating on, and return a different type of query object.
 
@@ -30,14 +23,14 @@ I've elided error handling below, for concision, but in practice that's a recipe
 
     db.Select('friendships')
     .where('source = ? OR target = ?', user_name, user_name)
-    .execute(function(err, friendships) {
+    .execute((err, friendships) => {
       console.log("All of Chris's connections: %j", friendships);
     });
 
     db.Insert('friendships')
     .set({source: 'Chris', target: 'Jess'})
     .returning('*')
-    .execute(function(err, rows) {
+    .execute((err, rows) => {
       // we've asked for "RETURNING *", so we get back a list of one row.
       console.log('inserted row: %j', rows[0]);
     });
@@ -63,4 +56,4 @@ We could model those sequences as an array of stuff like "SqlString" and "SqlPar
 
 ## License
 
-Copyright 2014-2015 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).
+Copyright 2014-2015 Christopher Brown. [MIT Licensed](http://chbrown.github.io/licenses/MIT/#2014-2015).

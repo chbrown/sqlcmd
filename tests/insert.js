@@ -1,7 +1,8 @@
 import assert from 'assert';
 import {describe, it} from 'mocha';
 
-var db = require('../');
+import {Connection} from '..';
+const db = new Connection();
 
 describe('db.Insert(...).add(...)', () => {
   var command = db.Insert('users').add('name', 'Chris').returning('*');

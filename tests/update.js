@@ -1,7 +1,8 @@
 import assert from 'assert';
 import {describe, it} from 'mocha';
 
-var db = require('../');
+import {Connection} from '..';
+const db = new Connection();
 
 describe('db.Update(...).setEqual(...).where(...)', () => {
   var command = db.Update('users').setEqual({name: 'Chris'}).where('id = 1').returning('*');

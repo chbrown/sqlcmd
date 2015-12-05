@@ -1,7 +1,8 @@
 import assert from 'assert';
 import {describe, it} from 'mocha';
 
-var db = require('../');
+import {Connection} from '..';
+const db = new Connection();
 
 describe('db.Select(...)', () => {
   var command = db.Select('users');
@@ -9,7 +10,7 @@ describe('db.Select(...)', () => {
     assert.equal(command.toSQL(), 'SELECT * FROM users');
   });
   it('should not be affected by limit() call', () => {
-    var modified_command = command.limit(100);
+    command.limit(100);
     assert.equal(command.toSQL(), 'SELECT * FROM users');
   });
 });

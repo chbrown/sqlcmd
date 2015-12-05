@@ -1,7 +1,8 @@
 import assert from 'assert';
 import {describe, it} from 'mocha';
 
-var db = require('../');
+import {Connection} from '..';
+const db = new Connection();
 
 describe('db.Delete(...).where(...)', () => {
   var command = db.Delete('users').where('active = FALSE');

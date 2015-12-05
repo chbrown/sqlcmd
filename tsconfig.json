@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES5"
+  },
+  "files": [
+    "node_modules/declarations/node/node.d.ts",
+    "commands/CreateTable.ts",
+    "commands/Delete.ts",
+    "commands/Insert.ts",
+    "commands/InsertOne.ts",
+    "commands/Select.ts",
+    "commands/SelectOne.ts",
+    "commands/Update.ts",
+    "commands/UpdateOne.ts",
+    "Command.ts",
+    "index.ts"
+  ]
+}
