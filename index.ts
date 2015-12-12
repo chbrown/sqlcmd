@@ -12,6 +12,7 @@ import Update from './commands/Update';
 import UpdateOne from './commands/UpdateOne';
 
 export type ConnectionOptions = any;
+export type Command = Command;
 
 /**
 Connection provides a single interface to functionality of sqlcmd, and stores

@@ -39,7 +39,7 @@ Command represents an abstract SQL command.
        $name sequences in the generated SQL.
 @param {parameters_i} Used to keep track of positional parameters.
 */
-export default class Command {
+abstract class Command {
   connection = undefined;
   statement: any = {};
   parameters: any = {};
@@ -68,6 +68,8 @@ export default class Command {
     copy.parameters_i = this.parameters_i;
     return copy;
   }
+
+  abstract toSQL(): string;
 
   /**
   Replace a SQL string like 'name = ?' and args like ['chris']
@@ -98,3 +100,5 @@ export default class Command {
     return (this.parameters_i++).toString();
   }
 }
+
+export default Command;
