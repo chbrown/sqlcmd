@@ -1,4 +1,4 @@
-import Command, {addCloningMethods} from '../Command';
+import Command from '../Command';
 
 export default class CreateTable extends Command {
   constructor(table: string) {
@@ -17,17 +17,18 @@ export default class CreateTable extends Command {
     parts.push(this.statement.table, '(', this.statement.columns.join(', '), ')');
     return parts.join(' ');
   }
-  _add(columns) {
+  _add(columns: string[]) {
     this.statement.columns.push(...columns);
     return this;
+  }
+  add(columns: string[]) {
+    return this.clone()._add(columns);
   }
   _ifNotExists() {
     this.statement.if_not_exists = true;
     return this;
   }
+  ifNotExists() {
+    return this.clone()._ifNotExists();
+  }
 }
-
-addCloningMethods(CreateTable, [
-  'add',
-  'ifNotExists',
-]);

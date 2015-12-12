@@ -1,4 +1,4 @@
-import Command, {addCloningMethods} from '../Command';
+import Command from '../Command';
 
 export default class Insert extends Command {
   constructor(table: string) {
@@ -10,8 +10,7 @@ export default class Insert extends Command {
     this.statement.returning = [];
   }
 
-  /** Insert#toSQL()
-
+  /**
   Generates a string like:
     INSERT INTO responses (user_id, experiment_id, stimulus_id, value)
       VALUES ($1, $2, $3, $4)
@@ -38,19 +37,17 @@ export default class Insert extends Command {
     return parts.join(' ');
   }
 
-  _add(column, value) {
+  _add(column: string, value: any) {
     this.statement.columns.push(column);
     this.parameters[column] = value;
     this.statement.values.push('$' + column);
     return this;
   }
+  add(column: string, value: any) {
+    return this.clone()._add(column, value);
+  }
 
-  /**
-  Like Update#set, this function presumes that all object keys are safe, and all object values are unsafe.
-
-  Ignore undefined values.
-  */
-  _set(hash) {
+  _set(hash: {[index: string]: any}) {
     for (var column in hash) {
       var value = hash[column];
       if (value !== undefined) {
@@ -59,9 +56,20 @@ export default class Insert extends Command {
     }
     return this;
   }
+  /**
+  This function presumes that all hash keys are safe, and all object values are unsafe.
 
-  /** Insert#_returning(...columns: string[])
+  Ignores undefined values.
+  */
+  set(hash: {[index: string]: any}) {
+    return this.clone()._set(hash);
+  }
 
+  _returning(...columns: string[]) {
+    this.statement.returning.push(...columns);
+    return this;
+  }
+  /**
   Call like:
 
       db.Insert('users').set({name: 'Chris'}).returning('*')
@@ -69,14 +77,7 @@ export default class Insert extends Command {
   to get back the full inserted row. Useful if you want the primary key or
   other generated / default values.
   */
-  _returning(...columns) {
-    this.statement.returning.push(...columns);
-    return this;
+  returning(...columns: string[]) {
+    return this.clone()._returning(...columns);
   }
 }
-
-addCloningMethods(Insert, [
-  'add',
-  'set',
-  'returning',
-]);

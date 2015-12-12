@@ -1,4 +1,4 @@
-import Command, {addCloningMethods} from '../Command';
+import Command from '../Command';
 
 export default class Delete extends Command {
   constructor(table: string) {
@@ -15,19 +15,16 @@ export default class Delete extends Command {
     return parts.join(' ');
   }
 
-  _where(sql, ...args) {
-    var args = [];
-
-    sql = this.interpolateQuestionMarks(sql, args);
-    this.statement.wheres.push(sql);
+  _where(sql: string, ...args: any[]) {
+    var interpolatedSql = this.interpolateQuestionMarks(sql, args);
+    this.statement.wheres.push(interpolatedSql);
     return this;
   }
+  where(sql: string, ...args: any[]) {
+    return this.clone()._where(sql, ...args);
+  }
 
-  /** Delete#_whereEqual(hash: object)
-
-  Just like Select._whereEqual: be careful with the keys.
-  */
-  _whereEqual(hash) {
+  _whereEqual(hash: {[index: string]: any}) {
     for (var column in hash) {
       var value = hash[column];
       if (value !== undefined) {
@@ -37,9 +34,10 @@ export default class Delete extends Command {
     }
     return this;
   }
+  /**
+  Just like Select._whereEqual, be careful with the keys.
+  */
+  whereEqual(hash: {[index: string]: any}) {
+    return this.clone()._whereEqual(hash);
+  }
 }
-
-addCloningMethods(Delete, [
-  'where',
-  'whereEqual',
-]);

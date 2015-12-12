@@ -1,4 +1,4 @@
-import Command, {addCloningMethods} from '../Command';
+import Command from '../Command';
 
 export default class Update extends Command {
   constructor(table: string) {
@@ -30,18 +30,16 @@ export default class Update extends Command {
     return parts.join(' ');
   }
 
-  _where(sql, ...args) {
-    sql = this.interpolateQuestionMarks(sql, args);
-    this.statement.wheres.push(sql);
-
+  _where(sql: string, ...args: any[]) {
+    var interpolatedSql = this.interpolateQuestionMarks(sql, args);
+    this.statement.wheres.push(interpolatedSql);
     return this;
   }
+  where(sql: string, ...args: any[]) {
+    return this.clone()._where(sql, ...args);
+  }
 
-  /** Update#_whereEqual(hash: any)
-
-  Just like Select._whereEqual
-  */
-  _whereEqual(hash) {
+  _whereEqual(hash: {[index: string]: any}) {
     for (var column in hash) {
       var value = hash[column];
       if (value !== undefined) {
@@ -51,22 +49,38 @@ export default class Update extends Command {
     }
     return this;
   }
+  /**
+  Just like Select#whereEqual
+  */
+  whereEqual(hash: {[index: string]: any}) {
+    return this.clone()._whereEqual(hash);
+  }
 
-  /** Update#_set(sql: string, args: any[])
-
+  _set(sql: string, ...args: any[]) {
+    sql = this.interpolateQuestionMarks(sql, args);
+    this.statement.sets.push(sql);
+    return this;
+  }
+  /**
   SQL can do more than just stuff like "... SET name = 'Chris' ...", it can also
   increment, e.g., "... SET counter = counter + 1 ...", so we call this _set,
   and have a separate _setEqual
   */
-  _set(sql, ...args) {
-    sql = this.interpolateQuestionMarks(sql, args);
-    this.statement.sets.push(sql);
-
-    return this;
+  set(sql: string, ...args: any[]) {
+    return this.clone()._set(sql, ...args);
   }
 
-  /** Update#_setEqual(hash: object)
-
+  _setEqual(hash: {[index: string]: any}) {
+    for (var column in hash) {
+      var value = hash[column];
+      if (value !== undefined) {
+        this.statement.sets.push(column + ' = $' + column);
+        this.parameters[column] = value;
+      }
+    }
+    return this;
+  }
+  /**
   Given a hash like
       {
         artist: 'Nathaniel Merriweather',
@@ -90,15 +104,8 @@ export default class Update extends Command {
 
   If that's not true, you should add values to `this.eqs` directly.
   */
-  _setEqual(hash) {
-    for (var column in hash) {
-      var value = hash[column];
-      if (value !== undefined) {
-        this.statement.sets.push(column + ' = $' + column);
-        this.parameters[column] = value;
-      }
-    }
-    return this;
+  setEqual(hash: {[index: string]: any}) {
+    return this.clone()._setEqual(hash);
   }
 
   /** Update#_returning(...columns: string[])
@@ -109,16 +116,11 @@ export default class Update extends Command {
 
   to get back all updated rows.
   */
-  _returning(...columns) {
+  _returning(...columns: string[]) {
     this.statement.returning.push(...columns);
     return this;
   }
+  returning(...columns: string[]) {
+    return this.clone()._returning(...columns);
+  }
 }
-
-addCloningMethods(Update, [
-  'where',
-  'whereEqual',
-  'set',
-  'setEqual',
-  'returning',
-]);

@@ -1,4 +1,4 @@
-import Command, {addCloningMethods} from '../Command';
+import Command from '../Command';
 
 export default class Select extends Command {
   constructor(table: string) {
@@ -42,8 +42,18 @@ export default class Select extends Command {
     }
     return parts.join(' ');
   }
-  _add(...columns) {
+
+  _add(...columns: string[]) {
     this.statement.columns.push(...columns);
+    return this;
+  }
+  add(...columns: string[]) {
+    return this.clone()._add(...columns);
+  }
+
+  _where(sql: string, ...args: any[]) {
+    var interpolatedSql = this.interpolateQuestionMarks(sql, args);
+    this.statement.wheres.push(interpolatedSql);
     return this;
   }
   /** Select#_where(sql: string, ...args: any[])
@@ -58,18 +68,11 @@ export default class Select extends Command {
 
   See also: Select#_whereEqual(...)
   */
-  _where(sql, ...args) {
-    sql = this.interpolateQuestionMarks(sql, args);
-    this.statement.wheres.push(sql);
-
-    return this;
+  where(sql: string, ...args: any[]) {
+    return this.clone()._where(sql, ...args);
   }
-  _whereEqual(hash) {
-    /**
-    This functions just like calling where() several times with simple
-    ('column = ?', value) pairs. Be careful with this one! only the hash's
-    values will be escaped, so SQL injection is totally possible with the keys.
-    */
+
+  _whereEqual(hash: {[index: string]: any}) {
     for (var column in hash) {
       var value = hash[column];
       if (value !== undefined) {
@@ -79,15 +82,16 @@ export default class Select extends Command {
     }
     return this;
   }
-  _whereIn(column, list) {
-    /** Though ugly, apparently this is just how it works:
+  /**
+  This functions just like calling where() several times with simple
+  ('column = ?', value) pairs. Be careful with this one! only the hash's
+  values will be escaped, so SQL injection is totally possible with the keys.
+  */
+  whereEqual(hash: {[index: string]: any}) {
+    return this.clone()._whereEqual(hash);
+  }
 
-    https://github.com/brianc/node-postgres/issues/431
-
-    Ends up with something like 'x IN($arg1, $arg2, $arg3)' and then
-      {arg1: 'a', arg2: 'b', arg3: 'c'} in the properties
-    Thus, each item in list is escaped (but column is not)
-    */
+  _whereIn(column: string, list: any[]) {
     if (list.length > 0) {
       var inlist = list.map((item) => {
         var name = this.nextParameterName();
@@ -104,36 +108,53 @@ export default class Select extends Command {
     }
     return this;
   }
-  /** Vulnerable to SQL injection! */
-  _groupBy(...columns) {
+  /** Though ugly, apparently this is just how it works:
+
+  https://github.com/brianc/node-postgres/issues/431
+
+  Ends up with something like 'x IN($arg1, $arg2, $arg3)' and then
+    {arg1: 'a', arg2: 'b', arg3: 'c'} in the properties
+  Thus, each item in list is escaped (but column is not)
+
+  An easier way is to use something like x = ANY($someArray)
+  */
+  whereIn(column: string, list: any[]) {
+    return this.clone()._whereIn(column, list);
+  }
+
+  _groupBy(...columns: string[]) {
     this.statement.group_bys.push(...columns);
     return this;
   }
   /** Vulnerable to SQL injection! */
-  _orderBy(...columns) {
+  groupBy(...columns: string[]) {
+    return this.clone()._groupBy(...columns);
+  }
+
+  _orderBy(...columns: string[]) {
     this.statement.order_bys.push(...columns);
     return this;
   }
-  _offset(offset) {
+  /** Vulnerable to SQL injection! */
+  orderBy(...columns: string[]) {
+    return this.clone()._orderBy(...columns);
+  }
+
+  _offset(offset: number) {
     this.statement.offset = '$offset';
     this.parameters.offset = offset;
     return this;
   }
-  _limit(limit) {
+  offset(offset: number) {
+    return this.clone()._offset(offset);
+  }
+
+  _limit(limit: number) {
     this.statement.limit = '$limit';
     this.parameters.limit = limit;
     return this;
   }
-
+  limit(limit: number) {
+    return this.clone()._limit(limit);
+  }
 }
-
-addCloningMethods(Select, [
-  'add',
-  'where',
-  'whereEqual',
-  'whereIn',
-  'groupBy',
-  'orderBy',
-  'offset',
-  'limit',
-]);

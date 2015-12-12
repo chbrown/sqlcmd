@@ -33,21 +33,17 @@ function clone<T>(obj: T): T {
 /**
 Command represents an abstract SQL command.
 
-statement
-  Contains the fields that, together with the class, determine how to generate
-  this command's actual SQL. This process is trigger by calling Command#toSQL().
-parameters
-  The parameters used in a parameterized query, matching the $name sequences in
-  the generated SQL.
-parameters_i
-  Used to keep track of
+@param {statement} Contains the fields that, together with the class, determine
+       how to generate this command's actual SQL, e.g., when calling Command#toSQL().
+@param {parameters} The parameters used in a parameterized query, matching the
+       $name sequences in the generated SQL.
+@param {parameters_i} Used to keep track of positional parameters.
 */
 export default class Command {
   connection = undefined;
   statement: any = {};
   parameters: any = {};
   parameters_i = 1;
-  // constructor() { }
 
   /**
   When a command is created via a connection's instance methods, e.g.,
@@ -64,7 +60,7 @@ export default class Command {
     return this.connection.executeCommand(this, callback);
   }
 
-  clone() {
+  clone(): this {
     var copy = Object.create(this.constructor.prototype);
     copy.connection = this.connection;
     copy.statement = clone(this.statement);
@@ -85,7 +81,7 @@ export default class Command {
   `undefined`, for the later ?'s. If there are more items in args than there are
   ?'s, those later items will be ignored.
   */
-  interpolateQuestionMarks(sql: string, args: any[]) {
+  protected interpolateQuestionMarks(sql: string, args: any[]) {
     if (typeof(sql) !== 'string') {
       var message = `Cannot interpolate question marks in object of type "${typeof(sql)}"; only strings are allowed.`;
       // error.object = sql;
@@ -98,21 +94,7 @@ export default class Command {
     });
   }
 
-  nextParameterName() {
+  protected nextParameterName() {
     return (this.parameters_i++).toString();
   }
-}
-
-export function addCloneMethod(Class, method) {
-  Class.prototype[method] = function() {
-    return Class.prototype['_' + method].apply(this.clone(), arguments);
-  };
-}
-
-export function addCloningMethods(Class, methods) {
-  methods.forEach(function(method) {
-    Class.prototype[method] = function(/* arguments */) {
-      return Class.prototype['_' + method].apply(this.clone(), arguments);
-    };
-  });
 }

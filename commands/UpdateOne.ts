@@ -1,10 +1,7 @@
-import Command, {addCloningMethods} from '../Command';
+import Command from '../Command';
 import Update from './Update';
 
 export default class UpdateOne extends Update {
-  constructor(table: string) {
-    super(table);
-  }
   execute(callback) {
     return this.connection.executeCommand(this, (error, rows) => {
       if (error) return callback(error);
