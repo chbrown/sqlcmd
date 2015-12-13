@@ -48,7 +48,7 @@ abstract class Command {
   /**
   When a command is created via a connection's instance methods, e.g.,
   conn.Select(...), the connection will be attached to the command. This method
-  calls #execute(...) on the originating connection, and will throw an Error if
+  calls #executeCommand(...) on the originating connection, and will throw an Error if
   there is no available connection. This may be the case if the command was
   imported and instantiated directly, i.e., by calling
   Select = require('sqlcmd/commands/select').
@@ -58,6 +58,18 @@ abstract class Command {
   */
   execute(callback: (error: Error, results?: any[]) => void) {
     return this.connection.executeCommand(this, callback);
+  }
+
+  /**
+  If there is a global type 'Promise' available, use it; otherwise, throw an exception.
+  */
+  executePromise(): PromiseLike<any[]> {
+    if (typeof Promise !== 'undefined') {
+      return new Promise<any[]>((resolve, reject) => {
+        this.execute((error, results) => error ? reject(error) : resolve(results));
+      });
+    }
+    throw new TypeError('"Promise" is not an available type');
   }
 
   clone(): this {

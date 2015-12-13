@@ -5,6 +5,7 @@
   },
   "files": [
     "node_modules/declarations/node/node.d.ts",
+    "promise.d.ts",
     "commands/CreateTable.ts",
     "commands/Delete.ts",
     "commands/Insert.ts",
