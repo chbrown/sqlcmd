@@ -23,7 +23,7 @@ Events:
   .on('log', (log_level, message, ...args) => { ... })
 
 */
-export class Connection extends EventEmitter {
+export abstract class Connection extends EventEmitter {
   constructor(public options: ConnectionOptions) {
     super();
   }
@@ -33,20 +33,16 @@ export class Connection extends EventEmitter {
   Command#execute() after the Command instance has been initialized with a
   sqlcmd.Connection.
   */
-  executeCommand(command: Command,
-                 callback: (error: Error, rows?: any[]) => void) {
-    throw new Error('not implemented');
-  }
+  abstract executeCommand(command: Command,
+                          callback: (error: Error, rows?: any[]) => void);
 
   /**
   Execute a plain SQL query, potentially with prepared parameters, against this
   sqlcmd.Connection.
   */
-  executeSQL(sql: string,
-             args: any[] | {[index: string]: any},
-             callback: (error: Error, rows?: any[]) => void) {
-    throw new Error('not implemented');
-  }
+  abstract executeSQL(sql: string,
+                      args: any[] | {[index: string]: any},
+                      callback: (error: Error, rows?: any[]) => void);
 
   CreateTable(table: string) {
     var command = new CreateTable(table);
