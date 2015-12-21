@@ -1,6 +1,6 @@
 import Command from '../Command';
 
-export default class Insert extends Command {
+export abstract class InsertBase<R> extends Command<R> {
   constructor(table: string) {
     super();
     this.statement.table = table;
@@ -79,5 +79,17 @@ export default class Insert extends Command {
   */
   returning(...columns: string[]) {
     return this.clone()._returning(...columns);
+  }
+}
+
+export default class Insert extends InsertBase<any[]> { }
+
+/**
+The user is still responsible for adding the .returning('*') clause.
+*/
+export class InsertOne extends InsertBase<any> {
+  constructor(table: string) {
+    super(table);
+    this._oneResult = true;
   }
 }

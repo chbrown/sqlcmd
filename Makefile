@@ -1,20 +1,23 @@
 BIN := node_modules/.bin
-TYPESCRIPT := $(shell jq -r '.files[]' tsconfig.json | grep -v node_modules)
+TYPESCRIPT := $(shell jq -r '.files[]' tsconfig.json | grep -v node_modules | grep -v promise.d.ts)
 JAVASCRIPT := $(TYPESCRIPT:%.ts=%.js)
 
-all: $(JAVASCRIPT)
+all: $(JAVASCRIPT) .gitignore .npmignore
 
 $(BIN)/tsc $(BIN)/mocha:
 	npm install
 
-%.js: %.ts $(BIN)/tsc
-	$(BIN)/tsc
-
-compile:
+%.js %.d.ts: %.ts $(BIN)/tsc
 	$(BIN)/tsc -d
 
 clean:
 	rm -f $(JAVASCRIPT) $(TYPESCRIPT:%.ts=%.d.ts)
 
-test: $(JAVASCRIPT)
+.npmignore: tsconfig.json
+	echo $(TYPESCRIPT) .travis.yml CHANGELOG.md Makefile tsconfig.json | tr ' ' '\n' > $@
+
+.gitignore: tsconfig.json
+	echo $(JAVASCRIPT) $(TYPESCRIPT:%.ts=%.d.ts) | tr ' ' '\n' > $@
+
+test: $(JAVASCRIPT) $(BIN)/mocha
 	$(BIN)/mocha --compilers js:babel-core/register tests/

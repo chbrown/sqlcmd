@@ -1,6 +1,6 @@
 import Command from '../Command';
 
-export default class Select extends Command {
+export abstract class SelectBase<R> extends Command<R> {
   constructor(table: string) {
     super();
     this.statement.table = table;
@@ -156,5 +156,15 @@ export default class Select extends Command {
   }
   limit(limit: number) {
     return this.clone()._limit(limit);
+  }
+}
+
+export default class Select extends SelectBase<any[]> { }
+
+export class SelectOne extends SelectBase<any> {
+  constructor(table: string) {
+    super(table);
+    this.statement.limit = '1';
+    this._oneResult = true;
   }
 }

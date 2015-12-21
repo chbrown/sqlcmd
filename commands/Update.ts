@@ -1,6 +1,6 @@
 import Command from '../Command';
 
-export default class Update extends Command {
+export abstract class UpdateBase<R> extends Command<R> {
   constructor(table: string) {
     super();
     this.statement.table = table;
@@ -122,5 +122,14 @@ export default class Update extends Command {
   }
   returning(...columns: string[]) {
     return this.clone()._returning(...columns);
+  }
+}
+
+export default class Update extends UpdateBase<any[]> { }
+
+export class UpdateOne extends UpdateBase<any> {
+  constructor(table: string) {
+    super(table);
+    this._oneResult = true;
   }
 }

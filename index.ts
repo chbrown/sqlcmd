@@ -4,15 +4,11 @@ import Command from './Command';
 
 import CreateTable from './commands/CreateTable';
 import Delete from './commands/Delete';
-import Insert from './commands/Insert';
-import InsertOne from './commands/InsertOne';
-import Select from './commands/Select';
-import SelectOne from './commands/SelectOne';
-import Update from './commands/Update';
-import UpdateOne from './commands/UpdateOne';
+import Insert, {InsertOne} from './commands/Insert';
+import Select, {SelectOne} from './commands/Select';
+import Update, {UpdateOne} from './commands/Update';
 
 export type ConnectionOptions = any;
-export type Command = Command;
 
 /**
 Connection provides a single interface to functionality of sqlcmd, and stores
@@ -33,8 +29,8 @@ export abstract class Connection extends EventEmitter {
   Command#execute() after the Command instance has been initialized with a
   sqlcmd.Connection.
   */
-  abstract executeCommand(command: Command,
-                          callback: (error: Error, rows?: any[]) => void);
+  abstract executeCommand<R>(command: Command<R>,
+                             callback: (error: Error, rows?: any[]) => void);
 
   /**
   Execute a plain SQL query, potentially with prepared parameters, against this

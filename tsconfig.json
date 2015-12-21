@@ -9,11 +9,8 @@
     "commands/CreateTable.ts",
     "commands/Delete.ts",
     "commands/Insert.ts",
-    "commands/InsertOne.ts",
     "commands/Select.ts",
-    "commands/SelectOne.ts",
     "commands/Update.ts",
-    "commands/UpdateOne.ts",
     "Command.ts",
     "index.ts"
   ]

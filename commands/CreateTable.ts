@@ -1,6 +1,6 @@
 import Command from '../Command';
 
-export default class CreateTable extends Command {
+export default class CreateTable extends Command<any[]> {
   constructor(table: string) {
     super();
     this.statement.table = table;

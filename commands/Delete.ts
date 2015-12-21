@@ -1,6 +1,6 @@
 import Command from '../Command';
 
-export default class Delete extends Command {
+export default class Delete extends Command<any[]> {
   constructor(table: string) {
     super();
     this.statement.table = table;

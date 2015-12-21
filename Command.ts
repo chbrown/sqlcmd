@@ -39,11 +39,12 @@ Command represents an abstract SQL command.
        $name sequences in the generated SQL.
 @param {parameters_i} Used to keep track of positional parameters.
 */
-abstract class Command {
+abstract class Command<R> {
   connection = undefined;
   statement: any = {};
   parameters: any = {};
   parameters_i = 1;
+  protected _oneResult: boolean = false;
 
   /**
   When a command is created via a connection's instance methods, e.g.,
@@ -56,17 +57,20 @@ abstract class Command {
   callback
     sent directly to this.connection.execute(command, callback)
   */
-  execute(callback: (error: Error, results?: any[]) => void) {
-    return this.connection.executeCommand(this, callback);
+  execute(callback: (error: Error, result?: R) => void) {
+    return this.connection.executeCommand(this, (error, results) => {
+      if (error) return callback(error);
+      callback(null, this._oneResult ? results[0] : results);
+    });
   }
 
   /**
   If there is a global type 'Promise' available, use it; otherwise, throw an exception.
   */
-  executePromise(): PromiseLike<any[]> {
+  executePromise(): PromiseLike<R> {
     if (typeof Promise !== 'undefined') {
-      return new Promise<any[]>((resolve, reject) => {
-        this.execute((error, results) => error ? reject(error) : resolve(results));
+      return new Promise<R>((resolve, reject) => {
+        this.execute((error, result) => error ? reject(error) : resolve(result));
       });
     }
     throw new TypeError('"Promise" is not an available type');
