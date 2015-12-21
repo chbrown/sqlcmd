@@ -82,6 +82,7 @@ abstract class Command<R> {
     copy.statement = clone(this.statement);
     copy.parameters = clone(this.parameters);
     copy.parameters_i = this.parameters_i;
+    copy._oneResult = this._oneResult;
     return copy;
   }
 
