@@ -52,3 +52,10 @@ describe('db.Select(...).offset(...).limit(...)', () => {
     assert.deepEqual(command.parameters, {offset: 250, limit: 25});
   });
 });
+
+describe('db.SelectOne(...)', () => {
+  var command = db.SelectOne('users');
+  it('should equal literal string', () => {
+    assert.equal(command.toSQL(), 'SELECT * FROM users LIMIT 1');
+  });
+});
