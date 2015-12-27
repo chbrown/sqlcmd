@@ -20,10 +20,10 @@ describe('db.CreateTable(...)', () => {
 });
 
 describe('db.CreateTable(...).add(...)', () => {
-  var command = db.CreateTable('users').add([
+  var command = db.CreateTable('users').add(
     'id SERIAL PRIMARY KEY',
-    'created TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
-  ]);
+    'created TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+  );
   it('should equal literal string', () => {
     assert.equal(command.toSQL(),
       'CREATE TABLE users ( id SERIAL PRIMARY KEY, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP )');
