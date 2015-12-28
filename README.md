@@ -1,7 +1,7 @@
 # sqlcmd
 
 [![Travis CI Build Status](https://travis-ci.org/chbrown/sqlcmd.svg)](https://travis-ci.org/chbrown/sqlcmd)
-[![npm version](https://badge.fury.io/js/sqlcmd.svg)](https://badge.fury.io/js/sqlcmd)
+[![npm version](https://badge.fury.io/js/sqlcmd.svg)](https://www.npmjs.com/package/sqlcmd)
 
 Coarse-grained partially composable SQL.
 
