@@ -9,7 +9,7 @@ import Select, {SelectOne} from './commands/Select';
 import Update, {UpdateOne} from './commands/Update';
 
 export type Command<R> = Command<R>;
-export type ConnectionOptions = any;
+export interface ConnectionOptions { }
 
 /**
 Connection provides a single interface to functionality of sqlcmd, and stores
