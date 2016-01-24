@@ -67,7 +67,7 @@ abstract class Command<R> {
   /**
   If there is a global type 'Promise' available, use it; otherwise, throw an exception.
   */
-  executePromise(): PromiseLike<R> {
+  executePromise(): Promise<R> {
     if (typeof Promise !== 'undefined') {
       return new Promise<R>((resolve, reject) => {
         this.execute((error, result) => error ? reject(error) : resolve(result));
