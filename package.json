@@ -1,6 +1,6 @@
 {
   "name": "sqlcmd",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "SQL command builder. String-based and incremental, with mutable and immutable interfaces.",
   "keywords": [
     "sql",
