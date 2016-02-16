@@ -30,6 +30,15 @@ function clone<T>(obj: T): T {
   }
 }
 
+export interface Promise<T> {
+  then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult>,
+                onrejected?: (reason: any) => TResult | PromiseLike<TResult>): Promise<TResult>;
+  then<TResult>(onfulfilled?: (value: T) => TResult | PromiseLike<TResult>,
+                onrejected?: (reason: any) => void): Promise<TResult>;
+  catch(onrejected?: (reason: any) => T | PromiseLike<T>): Promise<T>;
+  catch(onrejected?: (reason: any) => void): Promise<T>;
+}
+
 /**
 Command represents an abstract SQL command.
 
