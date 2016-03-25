@@ -37,6 +37,7 @@ export interface Promise<T> {
                 onrejected?: (reason: any) => void): Promise<TResult>;
   catch(onrejected?: (reason: any) => T | PromiseLike<T>): Promise<T>;
   catch(onrejected?: (reason: any) => void): Promise<T>;
+  [Symbol.toStringTag]: "Promise";
 }
 
 /**

@@ -73,7 +73,7 @@ interface Promise<T> {
     catch(onrejected?: (reason: any) => T | PromiseLike<T>): Promise<T>;
     catch(onrejected?: (reason: any) => void): Promise<T>;
 
-    [Symbol.toStringTag]: string;
+    [Symbol.toStringTag]: "Promise";
 }
 
 interface PromiseConstructor {
