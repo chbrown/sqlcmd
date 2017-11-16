@@ -1,8 +1,8 @@
-import assert from 'assert';
-import {describe, it} from 'mocha';
+import * as assert from 'assert';
+import 'mocha';
 
-import {Connection} from '..';
-const db = new Connection();
+import {Connection} from '.';
+const db = new Connection({});
 
 describe('db.Select(...)', () => {
   var command = db.Select('users');

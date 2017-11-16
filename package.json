@@ -20,12 +20,15 @@
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "devDependencies": {
-    "babel-core": "5.8.35",
-    "declarations": "0.1.10",
-    "mocha": "2.4.5",
-    "typescript": "1.8.9"
+    "@types/node": "latest",
+    "@types/mocha": "^2.2.43",
+    "mocha": "^2.5.3",
+    "typescript": "^2.6.1"
   },
   "scripts": {
-    "test": "make test"
+    "prepare": "tsc -t ES6 -m commonjs -d",
+    "pretest": "tsc -p tests -t ES6 -m commonjs",
+    "test": "mocha tests/",
+    "clean": "tsc -m commonjs -d --listEmittedFiles | sed 's/^TSFILE: //' | xargs rm -v"
   }
 }

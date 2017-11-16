@@ -1,0 +1,9 @@
+{
+  "files": [
+    "CreateTable.ts",
+    "Delete.ts",
+    "Insert.ts",
+    "Select.ts",
+    "Update.ts"
+  ]
+}

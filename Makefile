@@ -18,6 +18,3 @@ clean:
 
 .gitignore: tsconfig.json
 	echo $(JAVASCRIPT) $(TYPESCRIPT:%.ts=%.d.ts) | tr ' ' '\n' > $@
-
-test: $(JAVASCRIPT) $(BIN)/mocha
-	$(BIN)/mocha --compilers js:babel-core/register tests/

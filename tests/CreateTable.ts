@@ -1,8 +1,8 @@
-import assert from 'assert';
-import {describe, it} from 'mocha';
+import * as assert from 'assert';
+import 'mocha';
 
-import {Connection} from '..';
-const db = new Connection();
+import {Connection} from '.';
+const db = new Connection({});
 
 describe('db.CreateTable(...)', () => {
   var command = db.CreateTable('users');
@@ -10,11 +10,11 @@ describe('db.CreateTable(...)', () => {
     assert.equal(command.toSQL(), 'CREATE TABLE users (  )');
   });
   it('should not be affected by add() call', () => {
-    command.add(['modified DATETIME']);
+    command.add('modified DATETIME');
     assert.equal(command.toSQL(), 'CREATE TABLE users (  )');
   });
   it('should be affected by _add() call', () => {
-    command._add(['modified DATETIME']);
+    command._add('modified DATETIME');
     assert.equal(command.toSQL(), 'CREATE TABLE users ( modified DATETIME )');
   });
 });
@@ -29,7 +29,7 @@ describe('db.CreateTable(...).add(...)', () => {
       'CREATE TABLE users ( id SERIAL PRIMARY KEY, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP )');
   });
   it('modified version should have extra column', () => {
-    var modified_command = command.add(['modified DATETIME']);
+    var modified_command = command.add('modified DATETIME');
     assert.equal(modified_command.toSQL(),
       'CREATE TABLE users ( id SERIAL PRIMARY KEY, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, modified DATETIME )');
   });

@@ -12,3 +12,9 @@ commands/Select.d.ts
 commands/Update.d.ts
 Command.d.ts
 index.d.ts
+tests/CreateTable.js
+tests/Delete.js
+tests/Insert.js
+tests/Select.js
+tests/Update.js
+tests/index.js

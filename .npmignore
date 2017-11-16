@@ -9,3 +9,4 @@ index.ts
 CHANGELOG.md
 Makefile
 tsconfig.json
+tests/
