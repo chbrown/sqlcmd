@@ -1,4 +1,4 @@
-# `2.0.2` (2018-03-05)
+# `3.0.1` (2018-03-05)
 
 * Replace `Object#hasOwnProperty` invocation with `Object.prototype.hasOwnProperty` call.
 
