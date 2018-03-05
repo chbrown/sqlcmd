@@ -1,11 +1,5 @@
-commands/CreateTable.ts
-commands/Delete.ts
-commands/Insert.ts
-commands/Select.ts
-commands/Update.ts
-Command.ts
-index.ts
+*.ts
+!*.d.ts
 .travis.yml
-CHANGELOG.md
-tsconfig.json
 tests/
+tsconfig.json
