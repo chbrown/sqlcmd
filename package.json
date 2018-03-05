@@ -23,6 +23,6 @@
     "prepare": "tsc -d",
     "pretest": "tsc",
     "test": "mocha tests/",
-    "clean": "tsc -m commonjs -d --listEmittedFiles | sed 's/^TSFILE: //' | xargs rm -v"
+    "clean": "tsc -d --listEmittedFiles | grep '^TSFILE: ' | sed 's/^TSFILE: //' | xargs rm -v"
   }
 }
