@@ -1,3 +1,8 @@
+# `2.0.2` (2018-03-05)
+
+* Replace `Object#hasOwnProperty` invocation with `Object.prototype.hasOwnProperty` call.
+
+
 # `2.0.1` (2015-12-05)
 
 * Merge <del>`testDependencies`</del> into `devDependencies` so that mocha actually gets installed.
