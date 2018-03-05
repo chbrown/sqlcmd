@@ -1,20 +1,20 @@
-import {EventEmitter} from 'events';
+import {EventEmitter} from 'events'
 
-import Command from './Command';
+import Command from './Command'
 
-import CreateTable from './commands/CreateTable';
-import Delete from './commands/Delete';
-import Insert, {InsertOne} from './commands/Insert';
-import Select, {SelectOne} from './commands/Select';
-import Update, {UpdateOne} from './commands/Update';
+import CreateTable from './commands/CreateTable'
+import Delete from './commands/Delete'
+import Insert, {InsertOne} from './commands/Insert'
+import Select, {SelectOne} from './commands/Select'
+import Update, {UpdateOne} from './commands/Update'
 
-export type Command<R> = Command<R>;
+export type Command<R> = Command<R>
 export interface ConnectionOptions { }
 
 /**
 Connection provides a single interface to functionality of sqlcmd, and stores
 configuration defaults to be used with every query. The options are unused in
-sqlcmd; only sqlcmd-pg, sqlcmd-sqlite3, etc., use the options argument.
+sqlcmd -- only sqlcmd-pg, sqlcmd-sqlite3, etc., use the options argument.
 
 Events:
   .on('log', (log_level, message, ...args) => { ... })
@@ -22,7 +22,7 @@ Events:
 */
 export abstract class Connection extends EventEmitter {
   constructor(public options: ConnectionOptions) {
-    super();
+    super()
   }
 
   /**
@@ -31,7 +31,7 @@ export abstract class Connection extends EventEmitter {
   sqlcmd.Connection.
   */
   abstract executeCommand<R>(command: Command<R>,
-                             callback: (error: Error, result?: R) => void): void;
+                             callback: (error: Error, result?: R) => void): void
 
   /**
   Execute a plain SQL query, potentially with prepared parameters, against this
@@ -39,53 +39,53 @@ export abstract class Connection extends EventEmitter {
   */
   abstract executeSQL(sql: string,
                       args: any[] | {[index: string]: any},
-                      callback: (error: Error, rows?: any[]) => void): void;
+                      callback: (error: Error, rows?: any[]) => void): void
 
   CreateTable(table: string) {
-    const command = new CreateTable(table);
-    command.connection = this;
-    return command;
+    const command = new CreateTable(table)
+    command.connection = this
+    return command
   }
 
   Delete(table: string) {
-    const command = new Delete(table);
-    command.connection = this;
-    return command;
+    const command = new Delete(table)
+    command.connection = this
+    return command
   }
 
   Insert(table: string) {
-    const command = new Insert(table);
-    command.connection = this;
-    return command;
+    const command = new Insert(table)
+    command.connection = this
+    return command
   }
 
   InsertOne(table: string) {
-    const command = new InsertOne(table);
-    command.connection = this;
-    return command;
+    const command = new InsertOne(table)
+    command.connection = this
+    return command
   }
 
   Select(table: string) {
-    const command = new Select(table);
-    command.connection = this;
-    return command;
+    const command = new Select(table)
+    command.connection = this
+    return command
   }
 
   SelectOne(table: string) {
-    const command = new SelectOne(table);
-    command.connection = this;
-    return command;
+    const command = new SelectOne(table)
+    command.connection = this
+    return command
   }
 
   Update(table: string) {
-    const command = new Update(table);
-    command.connection = this;
-    return command;
+    const command = new Update(table)
+    command.connection = this
+    return command
   }
 
   UpdateOne(table: string) {
-    const command = new UpdateOne(table);
-    command.connection = this;
-    return command;
+    const command = new UpdateOne(table)
+    command.connection = this
+    return command
   }
 }

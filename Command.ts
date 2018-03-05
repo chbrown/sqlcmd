@@ -1,32 +1,32 @@
 /**
 Deep-copy a plain object or array. There is no special handling for other
-types of objects; it simply copies everything else by reference.
+types of objects -- it simply copies everything else by reference.
 */
 function clone<T>(obj: T): T {
   // typeof null == 'object' (wat), so we check for that case early.
   if (obj === null) {
-    return obj;
+    return obj
   }
   else if (Array.isArray(obj)) {
-    return (obj as any).map(clone);
+    return (obj as any).map(clone)
   }
   // typeof new Date() == 'object', so we check for that case too.
   else if (obj instanceof Date) {
-    return new Date(obj as any) as any;
+    return new Date(obj as any) as any
   }
   else if (typeof obj === 'object') {
-    const copy: T = {} as any;
+    const copy: T = {} as any
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        copy[key] = clone(obj[key]);
+        copy[key] = clone(obj[key])
       }
     }
-    return copy;
+    return copy
   }
   else {
     // typeof undefined == 'undefined', so that will pass through here,
     // along with strings, numbers, true, and false.
-    return obj;
+    return obj
   }
 }
 
@@ -40,11 +40,11 @@ Command represents an abstract SQL command.
 @param {parameters_i} Used to keep track of positional parameters.
 */
 abstract class Command<R> {
-  connection: any = undefined;
-  statement: any = {};
-  parameters: any = {};
-  parameters_i = 1;
-  protected _oneResult: boolean = false;
+  connection: any = undefined
+  statement: any = {}
+  parameters: any = {}
+  parameters_i = 1
+  protected _oneResult: boolean = false
 
   /**
   When a command is created via a connection's instance methods, e.g.,
@@ -59,34 +59,34 @@ abstract class Command<R> {
   */
   execute(callback: (error: Error, result?: R) => void): void {
     return this.connection.executeCommand(this, (error: Error, results: any) => {
-      if (error) return callback(error);
-      callback(null, this._oneResult ? results[0] : results);
-    });
+      if (error) return callback(error)
+      callback(null, this._oneResult ? results[0] : results)
+    })
   }
 
   /**
-  If there is a global type 'Promise' available, use it; otherwise, throw an exception.
+  If there is a global type 'Promise' available, use it -- otherwise, throw an exception.
   */
   executePromise(): Promise<R> {
     if (typeof Promise !== 'undefined') {
       return new Promise<R>((resolve, reject) => {
-        this.execute((error, result) => error ? reject(error) : resolve(result));
-      });
+        this.execute((error, result) => error ? reject(error) : resolve(result))
+      })
     }
-    throw new TypeError('"Promise" is not an available type');
+    throw new TypeError('"Promise" is not an available type')
   }
 
   clone(): this {
-    const copy = Object.create(this.constructor.prototype);
-    copy.connection = this.connection;
-    copy.statement = clone(this.statement);
-    copy.parameters = clone(this.parameters);
-    copy.parameters_i = this.parameters_i;
-    copy._oneResult = this._oneResult;
-    return copy;
+    const copy = Object.create(this.constructor.prototype)
+    copy.connection = this.connection
+    copy.statement = clone(this.statement)
+    copy.parameters = clone(this.parameters)
+    copy.parameters_i = this.parameters_i
+    copy._oneResult = this._oneResult
+    return copy
   }
 
-  abstract toSQL(): string;
+  abstract toSQL(): string
 
   /**
   Replace a SQL string like 'name = ?' and args like ['chris']
@@ -102,20 +102,20 @@ abstract class Command<R> {
   */
   protected interpolateQuestionMarks(sql: string, args: any[]) {
     if (typeof(sql) !== 'string') {
-      const message = `Cannot interpolate question marks in object of type "${typeof(sql)}"; only strings are allowed.`;
-      // error.object = sql;
-      throw new Error(message);
+      const message = `Cannot interpolate question marks in object of type "${typeof(sql)}"; only strings are allowed.`
+      // error.object = sql
+      throw new Error(message)
     }
     return sql.replace(/\?/g, (match) => {
-      const name = (this.parameters_i++).toString();
-      this.parameters[name] = args.shift();
-      return '$' + name;
-    });
+      const name = (this.parameters_i++).toString()
+      this.parameters[name] = args.shift()
+      return '$' + name
+    })
   }
 
   protected nextParameterName() {
-    return (this.parameters_i++).toString();
+    return (this.parameters_i++).toString()
   }
 }
 
-export default Command;
+export default Command

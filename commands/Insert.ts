@@ -1,13 +1,13 @@
-import Command from '../Command';
+import Command from '../Command'
 
 export abstract class InsertBase<R> extends Command<R> {
   constructor(table: string) {
-    super();
-    this.statement.table = table;
-    this.statement.columns = [];
-    // values should be as long as columns; it'll often be $variables, but not necessarily
-    this.statement.values = [];
-    this.statement.returning = [];
+    super()
+    this.statement.table = table
+    this.statement.columns = []
+    // values should be as long as columns -- it'll often be $variables, but not necessarily
+    this.statement.values = []
+    this.statement.returning = []
   }
 
   /**
@@ -16,45 +16,45 @@ export abstract class InsertBase<R> extends Command<R> {
       VALUES ($1, $2, $3, $4)
   */
   toSQL() {
-    const parts = ['INSERT INTO', this.statement.table];
+    const parts = ['INSERT INTO', this.statement.table]
     // no columns means ALL columns, in default order
     if (this.statement.columns.length > 0) {
-      parts.push('(' + this.statement.columns.join(', ') + ')');
+      parts.push('(' + this.statement.columns.join(', ') + ')')
     }
     // no values means defaults only
     if (this.statement.values.length === 0) {
-      parts.push('DEFAULT VALUES');
+      parts.push('DEFAULT VALUES')
     }
     else {
-      parts.push('VALUES (' + this.statement.values.join(', ') + ')');
+      parts.push('VALUES (' + this.statement.values.join(', ') + ')')
     }
 
     if (this.statement.returning.length > 0) {
       // not default since sqlite can't handle it
-      parts.push('RETURNING', this.statement.returning.join(', '));
+      parts.push('RETURNING', this.statement.returning.join(', '))
     }
 
-    return parts.join(' ');
+    return parts.join(' ')
   }
 
   _add(column: string, value: any) {
-    this.statement.columns.push(column);
-    this.parameters[column] = value;
-    this.statement.values.push('$' + column);
-    return this;
+    this.statement.columns.push(column)
+    this.parameters[column] = value
+    this.statement.values.push('$' + column)
+    return this
   }
   add(column: string, value: any) {
-    return this.clone()._add(column, value);
+    return this.clone()._add(column, value)
   }
 
   _set(hash: {[index: string]: any}) {
     for (const column in hash) {
-      const value = hash[column];
+      const value = hash[column]
       if (value !== undefined) {
-        this._add(column, value);
+        this._add(column, value)
       }
     }
-    return this;
+    return this
   }
   /**
   This function presumes that all hash keys are safe, and all object values are unsafe.
@@ -62,12 +62,12 @@ export abstract class InsertBase<R> extends Command<R> {
   Ignores undefined values.
   */
   set(hash: {[index: string]: any}) {
-    return this.clone()._set(hash);
+    return this.clone()._set(hash)
   }
 
   _returning(...columns: string[]) {
-    this.statement.returning.push(...columns);
-    return this;
+    this.statement.returning.push(...columns)
+    return this
   }
   /**
   Call like:
@@ -78,7 +78,7 @@ export abstract class InsertBase<R> extends Command<R> {
   other generated / default values.
   */
   returning(...columns: string[]) {
-    return this.clone()._returning(...columns);
+    return this.clone()._returning(...columns)
   }
 }
 
@@ -89,7 +89,7 @@ The user is still responsible for adding the .returning('*') clause.
 */
 export class InsertOne extends InsertBase<any> {
   constructor(table: string) {
-    super(table);
-    this._oneResult = true;
+    super(table)
+    this._oneResult = true
   }
 }
