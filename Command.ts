@@ -40,7 +40,7 @@ Command represents an abstract SQL command.
 @param {parameters_i} Used to keep track of positional parameters.
 */
 abstract class Command<R> {
-  connection = undefined;
+  connection: any = undefined;
   statement: any = {};
   parameters: any = {};
   parameters_i = 1;
@@ -57,8 +57,8 @@ abstract class Command<R> {
   callback
     sent directly to this.connection.execute(command, callback)
   */
-  execute(callback: (error: Error, result?: R) => void) {
-    return this.connection.executeCommand(this, (error, results) => {
+  execute(callback: (error: Error, result?: R) => void): void {
+    return this.connection.executeCommand(this, (error: Error, results: any) => {
       if (error) return callback(error);
       callback(null, this._oneResult ? results[0] : results);
     });

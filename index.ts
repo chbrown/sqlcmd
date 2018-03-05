@@ -31,7 +31,7 @@ export abstract class Connection extends EventEmitter {
   sqlcmd.Connection.
   */
   abstract executeCommand<R>(command: Command<R>,
-                             callback: (error: Error, result?: R) => void);
+                             callback: (error: Error, result?: R) => void): void;
 
   /**
   Execute a plain SQL query, potentially with prepared parameters, against this
@@ -39,7 +39,7 @@ export abstract class Connection extends EventEmitter {
   */
   abstract executeSQL(sql: string,
                       args: any[] | {[index: string]: any},
-                      callback: (error: Error, rows?: any[]) => void);
+                      callback: (error: Error, rows?: any[]) => void): void;
 
   CreateTable(table: string) {
     var command = new CreateTable(table);
