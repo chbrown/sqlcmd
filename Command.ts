@@ -17,7 +17,7 @@ function clone<T>(obj: T): T {
   else if (typeof obj === 'object') {
     var copy: T = <any>{};
     for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         copy[key] = clone(obj[key]);
       }
     }
