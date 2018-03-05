@@ -15,7 +15,7 @@ export abstract class UpdateBase<R> extends Command<R> {
     UPDATE users SET ip = $1, user_agent = $2 WHERE id = $3
   */
   toSQL() {
-    var parts = ['UPDATE', this.statement.table];
+    const parts = ['UPDATE', this.statement.table];
     if (this.statement.sets.length > 0) {
       parts.push('SET', this.statement.sets.join(', '));
     }
@@ -31,7 +31,7 @@ export abstract class UpdateBase<R> extends Command<R> {
   }
 
   _where(sql: string, ...args: any[]) {
-    var interpolatedSql = this.interpolateQuestionMarks(sql, args);
+    const interpolatedSql = this.interpolateQuestionMarks(sql, args);
     this.statement.wheres.push(interpolatedSql);
     return this;
   }
@@ -40,8 +40,8 @@ export abstract class UpdateBase<R> extends Command<R> {
   }
 
   _whereEqual(hash: {[index: string]: any}) {
-    for (var column in hash) {
-      var value = hash[column];
+    for (const column in hash) {
+      const value = hash[column];
       if (value !== undefined) {
         this.statement.wheres.push(column + ' = $' + column);
         this.parameters[column] = value;
@@ -71,8 +71,8 @@ export abstract class UpdateBase<R> extends Command<R> {
   }
 
   _setEqual(hash: {[index: string]: any}) {
-    for (var column in hash) {
-      var value = hash[column];
+    for (const column in hash) {
+      const value = hash[column];
       if (value !== undefined) {
         this.statement.sets.push(column + ' = $' + column);
         this.parameters[column] = value;

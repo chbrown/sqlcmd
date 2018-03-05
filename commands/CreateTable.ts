@@ -8,7 +8,7 @@ export default class CreateTable extends Command<any[]> {
     this.statement.columns = [];
   }
   toSQL() {
-    var parts = ['CREATE TABLE'];
+    const parts = ['CREATE TABLE'];
 
     if (this.statement.if_not_exists) {
       parts.push('IF NOT EXISTS');

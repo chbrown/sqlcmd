@@ -8,7 +8,7 @@ export default class Delete extends Command<any[]> {
   }
 
   toSQL() {
-    var parts = ['DELETE FROM', this.statement.table];
+    const parts = ['DELETE FROM', this.statement.table];
     if (this.statement.wheres.length > 0) {
       parts.push('WHERE', this.statement.wheres.join(' AND '));
     }
@@ -16,7 +16,7 @@ export default class Delete extends Command<any[]> {
   }
 
   _where(sql: string, ...args: any[]) {
-    var interpolatedSql = this.interpolateQuestionMarks(sql, args);
+    const interpolatedSql = this.interpolateQuestionMarks(sql, args);
     this.statement.wheres.push(interpolatedSql);
     return this;
   }
@@ -25,8 +25,8 @@ export default class Delete extends Command<any[]> {
   }
 
   _whereEqual(hash: {[index: string]: any}) {
-    for (var column in hash) {
-      var value = hash[column];
+    for (const column in hash) {
+      const value = hash[column];
       if (value !== undefined) {
         this.statement.wheres.push(column + ' = $' + column);
         this.parameters[column] = value;

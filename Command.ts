@@ -8,15 +8,15 @@ function clone<T>(obj: T): T {
     return obj;
   }
   else if (Array.isArray(obj)) {
-    return (<any>obj).map(clone);
+    return (obj as any).map(clone);
   }
   // typeof new Date() == 'object', so we check for that case too.
   else if (obj instanceof Date) {
-    return <any>new Date(<any>obj);
+    return new Date(obj as any) as any;
   }
   else if (typeof obj === 'object') {
-    var copy: T = <any>{};
-    for (var key in obj) {
+    const copy: T = {} as any;
+    for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
         copy[key] = clone(obj[key]);
       }
@@ -77,7 +77,7 @@ abstract class Command<R> {
   }
 
   clone(): this {
-    var copy = Object.create(this.constructor.prototype);
+    const copy = Object.create(this.constructor.prototype);
     copy.connection = this.connection;
     copy.statement = clone(this.statement);
     copy.parameters = clone(this.parameters);
@@ -102,12 +102,12 @@ abstract class Command<R> {
   */
   protected interpolateQuestionMarks(sql: string, args: any[]) {
     if (typeof(sql) !== 'string') {
-      var message = `Cannot interpolate question marks in object of type "${typeof(sql)}"; only strings are allowed.`;
+      const message = `Cannot interpolate question marks in object of type "${typeof(sql)}"; only strings are allowed.`;
       // error.object = sql;
       throw new Error(message);
     }
     return sql.replace(/\?/g, (match) => {
-      var name = (this.parameters_i++).toString();
+      const name = (this.parameters_i++).toString();
       this.parameters[name] = args.shift();
       return '$' + name;
     });

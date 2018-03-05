@@ -16,7 +16,7 @@ export abstract class InsertBase<R> extends Command<R> {
       VALUES ($1, $2, $3, $4)
   */
   toSQL() {
-    var parts = ['INSERT INTO', this.statement.table];
+    const parts = ['INSERT INTO', this.statement.table];
     // no columns means ALL columns, in default order
     if (this.statement.columns.length > 0) {
       parts.push('(' + this.statement.columns.join(', ') + ')');
@@ -48,8 +48,8 @@ export abstract class InsertBase<R> extends Command<R> {
   }
 
   _set(hash: {[index: string]: any}) {
-    for (var column in hash) {
-      var value = hash[column];
+    for (const column in hash) {
+      const value = hash[column];
       if (value !== undefined) {
         this._add(column, value);
       }

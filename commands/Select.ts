@@ -10,7 +10,7 @@ export abstract class SelectBase<R> extends Command<R> {
     this.statement.order_bys = [];
   }
   toSQL() {
-    var parts = ['SELECT'];
+    const parts = ['SELECT'];
     // add columns
     if (this.statement.columns.length === 0) {
       parts.push('*');
@@ -52,7 +52,7 @@ export abstract class SelectBase<R> extends Command<R> {
   }
 
   _where(sql: string, ...args: any[]) {
-    var interpolatedSql = this.interpolateQuestionMarks(sql, args);
+    const interpolatedSql = this.interpolateQuestionMarks(sql, args);
     this.statement.wheres.push(interpolatedSql);
     return this;
   }
@@ -73,8 +73,8 @@ export abstract class SelectBase<R> extends Command<R> {
   }
 
   _whereEqual(hash: {[index: string]: any}) {
-    for (var column in hash) {
-      var value = hash[column];
+    for (const column in hash) {
+      const value = hash[column];
       if (value !== undefined) {
         this.statement.wheres.push(column + ' = $' + column);
         this.parameters[column] = value;
@@ -93,8 +93,8 @@ export abstract class SelectBase<R> extends Command<R> {
 
   _whereIn(column: string, list: any[]) {
     if (list.length > 0) {
-      var inlist = list.map((item) => {
-        var name = this.nextParameterName();
+      const inlist = list.map((item) => {
+        const name = this.nextParameterName();
         this.parameters[name] = item;
         return '$' + name;
       }).join(', ');

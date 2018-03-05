@@ -42,49 +42,49 @@ export abstract class Connection extends EventEmitter {
                       callback: (error: Error, rows?: any[]) => void): void;
 
   CreateTable(table: string) {
-    var command = new CreateTable(table);
+    const command = new CreateTable(table);
     command.connection = this;
     return command;
   }
 
   Delete(table: string) {
-    var command = new Delete(table);
+    const command = new Delete(table);
     command.connection = this;
     return command;
   }
 
   Insert(table: string) {
-    var command = new Insert(table);
+    const command = new Insert(table);
     command.connection = this;
     return command;
   }
 
   InsertOne(table: string) {
-    var command = new InsertOne(table);
+    const command = new InsertOne(table);
     command.connection = this;
     return command;
   }
 
   Select(table: string) {
-    var command = new Select(table);
+    const command = new Select(table);
     command.connection = this;
     return command;
   }
 
   SelectOne(table: string) {
-    var command = new SelectOne(table);
+    const command = new SelectOne(table);
     command.connection = this;
     return command;
   }
 
   Update(table: string) {
-    var command = new Update(table);
+    const command = new Update(table);
     command.connection = this;
     return command;
   }
 
   UpdateOne(table: string) {
-    var command = new UpdateOne(table);
+    const command = new UpdateOne(table);
     command.connection = this;
     return command;
   }
