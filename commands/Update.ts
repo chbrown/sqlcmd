@@ -9,8 +9,7 @@ export abstract class UpdateBase<R> extends Command<R> {
     this.statement.returning = []
   }
 
-  /** Update#toSQL()
-
+  /**
   Generates a string like:
     UPDATE users SET ip = $1, user_agent = $2 WHERE id = $3
   */
@@ -43,7 +42,7 @@ export abstract class UpdateBase<R> extends Command<R> {
     for (const column in hash) {
       const value = hash[column]
       if (value !== undefined) {
-        this.statement.wheres.push(column + ' = $' + column)
+        this.statement.wheres.push(`${column} = $${column}`)
         this.parameters[column] = value
       }
     }
@@ -74,7 +73,7 @@ export abstract class UpdateBase<R> extends Command<R> {
     for (const column in hash) {
       const value = hash[column]
       if (value !== undefined) {
-        this.statement.sets.push(column + ' = $' + column)
+        this.statement.sets.push(`${column} = $${column}`)
         this.parameters[column] = value
       }
     }
@@ -108,8 +107,7 @@ export abstract class UpdateBase<R> extends Command<R> {
     return this.clone()._setEqual(hash)
   }
 
-  /** Update#_returning(...columns: string[])
-
+  /**
   Call like:
 
       db.Update('users').set({active: false}).returning('*')

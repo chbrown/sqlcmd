@@ -9,6 +9,7 @@ export abstract class SelectBase<R> extends Command<R> {
     this.statement.group_bys = []
     this.statement.order_bys = []
   }
+
   toSQL() {
     const parts = ['SELECT']
     // add columns
@@ -56,8 +57,7 @@ export abstract class SelectBase<R> extends Command<R> {
     this.statement.wheres.push(interpolatedSql)
     return this
   }
-  /** Select#_where(sql: string, ...args: any[])
-
+  /**
   Add a WHERE statement to be AND-merged with any other WHERE statements.
 
   sql
@@ -76,7 +76,7 @@ export abstract class SelectBase<R> extends Command<R> {
     for (const column in hash) {
       const value = hash[column]
       if (value !== undefined) {
-        this.statement.wheres.push(column + ' = $' + column)
+        this.statement.wheres.push(`${column} = $${column}`)
         this.parameters[column] = value
       }
     }
@@ -96,9 +96,9 @@ export abstract class SelectBase<R> extends Command<R> {
       const inlist = list.map((item) => {
         const name = this.nextParameterName()
         this.parameters[name] = item
-        return '$' + name
+        return `$${name}`
       }).join(', ')
-      this.statement.wheres.push(column + ' IN (' + inlist + ')')
+      this.statement.wheres.push(`${column} IN (${inlist})`)
     }
     else {
       // 0-length lists get special treatment.
@@ -108,7 +108,8 @@ export abstract class SelectBase<R> extends Command<R> {
     }
     return this
   }
-  /** Though ugly, apparently this is just how it works:
+  /**
+  Though ugly, apparently this is just how it works:
 
   https://github.com/brianc/node-postgres/issues/431
 

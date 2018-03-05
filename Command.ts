@@ -32,17 +32,22 @@ function clone<T>(obj: T): T {
 
 /**
 Command represents an abstract SQL command.
-
-@param {statement} Contains the fields that, together with the class, determine
-       how to generate this command's actual SQL, e.g., when calling Command#toSQL().
-@param {parameters} The parameters used in a parameterized query, matching the
-       $name sequences in the generated SQL.
-@param {parameters_i} Used to keep track of positional parameters.
 */
 abstract class Command<R> {
   connection: any = undefined
+  /**
+  Contains the fields that, together with the class, determine
+  how to generate this command's actual SQL, e.g., when calling Command#toSQL().
+  */
   statement: any = {}
+  /**
+  The parameters used in a parameterized query, matching the
+  $name sequences in the generated SQL.
+  */
   parameters: any = {}
+  /**
+  Used to keep track of positional parameters.
+  */
   parameters_i = 1
   protected _oneResult: boolean = false
 
@@ -109,7 +114,7 @@ abstract class Command<R> {
     return sql.replace(/\?/g, (match) => {
       const name = (this.parameters_i++).toString()
       this.parameters[name] = args.shift()
-      return '$' + name
+      return `$${name}`
     })
   }
 

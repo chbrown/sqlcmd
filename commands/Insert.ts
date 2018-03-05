@@ -19,14 +19,14 @@ export abstract class InsertBase<R> extends Command<R> {
     const parts = ['INSERT INTO', this.statement.table]
     // no columns means ALL columns, in default order
     if (this.statement.columns.length > 0) {
-      parts.push('(' + this.statement.columns.join(', ') + ')')
+      parts.push(`(${this.statement.columns.join(', ')})`)
     }
     // no values means defaults only
     if (this.statement.values.length === 0) {
       parts.push('DEFAULT VALUES')
     }
     else {
-      parts.push('VALUES (' + this.statement.values.join(', ') + ')')
+      parts.push(`VALUES (${this.statement.values.join(', ')})`)
     }
 
     if (this.statement.returning.length > 0) {
@@ -40,7 +40,7 @@ export abstract class InsertBase<R> extends Command<R> {
   _add(column: string, value: any) {
     this.statement.columns.push(column)
     this.parameters[column] = value
-    this.statement.values.push('$' + column)
+    this.statement.values.push(`$${column}`)
     return this
   }
   add(column: string, value: any) {

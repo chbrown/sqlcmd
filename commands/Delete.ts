@@ -28,7 +28,7 @@ export default class Delete extends Command<any[]> {
     for (const column in hash) {
       const value = hash[column]
       if (value !== undefined) {
-        this.statement.wheres.push(column + ' = $' + column)
+        this.statement.wheres.push(`${column} = $${column}`)
         this.parameters[column] = value
       }
     }
