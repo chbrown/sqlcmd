@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6"
+  },
   "files": [
     "commands/CreateTable.ts",
     "commands/Delete.ts",
