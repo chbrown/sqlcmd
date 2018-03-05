@@ -14,8 +14,8 @@
   "license": "MIT",
   "author": "Christopher Brown <io@henrian.com>",
   "devDependencies": {
-    "@types/node": "latest",
     "@types/mocha": "^2.2.48",
+    "@types/node": "latest",
     "mocha": "^5.0.1",
     "typescript": "^2.7.2"
   },
