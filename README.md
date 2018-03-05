@@ -1,7 +1,7 @@
 # sqlcmd
 
-[![Travis CI Build Status](https://travis-ci.org/chbrown/sqlcmd.svg)](https://travis-ci.org/chbrown/sqlcmd)
-[![npm version](https://badge.fury.io/js/sqlcmd.svg)](https://www.npmjs.com/package/sqlcmd)
+[![latest version published to npm](https://badge.fury.io/js/sqlcmd.svg)](https://www.npmjs.com/package/sqlcmd)
+[![Travis CI build status](https://travis-ci.org/chbrown/sqlcmd.svg?branch=master)](https://travis-ci.org/chbrown/sqlcmd)
 
 Coarse-grained partially composable SQL.
 
@@ -56,4 +56,5 @@ We could model those sequences as an array of stuff like "SqlString" and "SqlPar
 
 ## License
 
-Copyright 2014-2015 Christopher Brown. [MIT Licensed](http://chbrown.github.io/licenses/MIT/#2014-2015).
+Copyright 2014-2015 Christopher Brown.
+[MIT Licensed](https://chbrown.github.io/licenses/MIT/#2014-2015).
