@@ -2,6 +2,7 @@
 
 [![latest version published to npm](https://badge.fury.io/js/sqlcmd.svg)](https://www.npmjs.com/package/sqlcmd)
 [![Travis CI build status](https://travis-ci.org/chbrown/sqlcmd.svg?branch=master)](https://travis-ci.org/chbrown/sqlcmd)
+[![Coverage status on Coveralls](https://coveralls.io/repos/github/chbrown/sqlcmd/badge.svg?branch=master)](https://coveralls.io/github/chbrown/sqlcmd?branch=master)
 
 Coarse-grained partially composable SQL.
 
