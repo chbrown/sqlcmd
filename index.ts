@@ -17,7 +17,7 @@ configuration defaults to be used with every query. The options are unused in
 sqlcmd -- only sqlcmd-pg, sqlcmd-sqlite3, etc., use the options argument.
 
 Events:
-  .on('log', (log_level, message, ...args) => { ... })
+  .on('log', ({level, format, args}) => { ... })
 
 */
 export abstract class Connection extends EventEmitter {
