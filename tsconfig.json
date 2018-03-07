@@ -9,11 +9,11 @@
     "commands/Insert.ts",
     "commands/Select.ts",
     "commands/Update.ts",
-    "tests/CreateTable.ts",
-    "tests/Delete.ts",
-    "tests/Insert.ts",
-    "tests/Select.ts",
-    "tests/Update.ts",
+    "test/CreateTable.ts",
+    "test/Delete.ts",
+    "test/Insert.ts",
+    "test/Select.ts",
+    "test/Update.ts",
     "Command.ts",
     "index.ts"
   ]

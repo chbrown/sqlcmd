@@ -22,7 +22,7 @@
   "scripts": {
     "prepare": "tsc -d",
     "pretest": "tsc",
-    "test": "mocha tests/",
+    "test": "mocha",
     "clean": "tsc -d --listEmittedFiles | grep '^TSFILE: ' | sed 's/^TSFILE: //' | xargs rm -v"
   }
 }
