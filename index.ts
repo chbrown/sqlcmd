@@ -11,6 +11,12 @@ import Update, {UpdateOne} from './commands/Update'
 export type Command<R> = Command<R>
 export interface ConnectionOptions { }
 
+export interface LogEvent {
+  level: string
+  format: string
+  args: any[]
+}
+
 /**
 Connection provides a single interface to functionality of sqlcmd, and stores
 configuration defaults to be used with every query. The options are unused in
