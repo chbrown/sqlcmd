@@ -8,7 +8,7 @@ import Insert, {InsertOne} from './commands/Insert'
 import Select, {SelectOne} from './commands/Select'
 import Update, {UpdateOne} from './commands/Update'
 
-export type Command<R> = Command<R>
+export {Command}
 export interface ConnectionOptions { }
 
 export interface LogEvent {
